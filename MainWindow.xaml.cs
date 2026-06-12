@@ -1,23 +1,33 @@
-﻿using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using stockfront.ViewModels;
 
 namespace stockfront;
 
 /// <summary>
-/// Interaction logic for MainWindow.xaml
+/// The main shell shown after a successful sign-in. Code-behind only forwards the ViewModel's
+/// logout request up to the host, which returns to the login window.
 /// </summary>
 public partial class MainWindow : Window
 {
-    public MainWindow()
+    private readonly MainViewModel _viewModel;
+
+    /// <summary>Raised when the signed-in user asks to log out.</summary>
+    public event EventHandler? LogoutRequested;
+
+    public MainWindow(MainViewModel viewModel)
     {
         InitializeComponent();
+        _viewModel = viewModel;
+        DataContext = viewModel;
+
+        _viewModel.LogoutRequested += OnLogoutRequested;
+    }
+
+    private void OnLogoutRequested() => LogoutRequested?.Invoke(this, EventArgs.Empty);
+
+    protected override void OnClosed(EventArgs e)
+    {
+        _viewModel.LogoutRequested -= OnLogoutRequested;
+        base.OnClosed(e);
     }
 }

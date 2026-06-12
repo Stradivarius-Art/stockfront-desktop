@@ -15,4 +15,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\StockFront.Contracts\StockFront.Contracts.csproj" />
+  </ItemGroup>
+
 </Project>

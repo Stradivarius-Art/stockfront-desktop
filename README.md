@@ -1,1 +1,24 @@
 # stockfront-desktop
+
+Складской учёт с витриной (WPF, .NET 10, MySQL + EF Core).
+
+## Запуск
+
+1. Скопируйте `.env.example` в `.env` и укажите строку подключения к MySQL
+   (`STOCKFRONT_DB_CONNECTION`). Файл `.env` не коммитится.
+2. Соберите и запустите проект `stockfront` (WPF-хост) на Windows.
+   При старте приложение само применяет миграции и при пустой таблице
+   пользователей заводит администратора по умолчанию.
+
+> Сборка и миграции выполняются на целевом (Windows) устройстве.
+
+## Авторизация
+
+- Модель 2-tier: WPF ↔ MySQL напрямую, без токенов/JWT. Вход = проверка пароля по
+  хешу (BCrypt) + singleton-сессия `ICurrentUser` в памяти. См. скилл `stockfront-auth`.
+- Роли: `Customer`, `WarehouseKeeper`, `Admin` (enum, хранится как `int`).
+- Контракты — в `StockFront.Contracts` (`IAuthService`, `ICurrentUser`, `IUserRepository`),
+  реализация — в `StockFront.Auth`, репозиторий — в `StockFront.Data`.
+
+**Администратор по умолчанию** (создаётся только в пустой БД): логин `admin`, пароль `admin`.
+Смените пароль после первого входа.

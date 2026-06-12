@@ -14,6 +14,9 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
          .IsRequired()
          .HasMaxLength(64);
 
+        b.Property(x => x.Email)
+         .HasMaxLength(256);
+
         b.Property(x => x.PasswordHash)
          .IsRequired()
          .HasMaxLength(256);
@@ -22,10 +25,9 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
          .IsRequired()
          .HasMaxLength(200);
 
-        // Stored as a string ("Operator", "Customer") for readable rows and filters.
+        // Three fixed roles — stored as an int (no separate Role table needed).
         b.Property(x => x.Role)
-         .HasConversion<string>()
-         .HasMaxLength(20)
+         .HasConversion<int>()
          .IsRequired();
 
         b.Property(x => x.IsActive)
@@ -35,7 +37,11 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
          .HasColumnType("datetime(6)")
          .HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
 
-        // Login must be unique — the database enforces it better than code.
+        b.Property(x => x.LastLoginAt)
+         .HasColumnType("datetime(6)");
+
+        // Login must be unique; e-mail must be unique when present (MySQL allows many NULLs).
         b.HasIndex(x => x.Username).IsUnique();
+        b.HasIndex(x => x.Email).IsUnique();
     }
 }

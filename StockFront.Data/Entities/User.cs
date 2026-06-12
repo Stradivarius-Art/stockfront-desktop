@@ -1,3 +1,5 @@
+using StockFront.Contracts.Auth;
+
 namespace StockFront.Data.Entities;
 
 /// <summary>
@@ -12,9 +14,12 @@ public sealed class User
     /// <summary>Login name. Unique across all accounts (enforced by the database).</summary>
     public string Username { get; set; } = null!;
 
+    /// <summary>Optional contact e-mail. Unique when present.</summary>
+    public string? Email { get; set; }
+
     /// <summary>
-    /// Password verifier. Holds the algorithm, salt and hash together (e.g. a PBKDF2/BCrypt
-    /// string) — never the plain password. Hashing itself is done in the host, not here.
+    /// Password verifier. Holds the algorithm, salt and hash together (a BCrypt string) — never
+    /// the plain password. Hashing itself is done in the auth layer, not here.
     /// </summary>
     public string PasswordHash { get; set; } = null!;
 
@@ -23,8 +28,11 @@ public sealed class User
 
     public UserRole Role { get; set; } = UserRole.Customer;
 
-    /// <summary>Disabled accounts stay in the table but cannot sign in.</summary>
+    /// <summary>Disabled accounts stay in the table (keeping order history) but cannot sign in.</summary>
     public bool IsActive { get; set; } = true;
 
     public DateTime CreatedAt { get; set; }
+
+    /// <summary>Last successful sign-in, or <c>null</c> if the account has never signed in.</summary>
+    public DateTime? LastLoginAt { get; set; }
 }

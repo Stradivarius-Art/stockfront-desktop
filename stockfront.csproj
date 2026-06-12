@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -7,15 +7,28 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <UseWPF>true</UseWPF>
+    <RootNamespace>stockfront</RootNamespace>
   </PropertyGroup>
 
-  <!-- StockFront.Data is its own project; don't pull its sources into the WPF app's glob. -->
+  <!-- The sibling projects live in subfolders; keep their sources out of the WPF app's glob
+       (we reference them as projects instead). -->
   <ItemGroup>
-    <Compile Remove="StockFront.Data/**/*.cs" />
-    <None Remove="StockFront.Data/**" />
-    <EmbeddedResource Remove="StockFront.Data/**" />
-    <Page Remove="StockFront.Data/**" />
-    <Resource Remove="StockFront.Data/**" />
+    <Compile Remove="StockFront.Data/**/*.cs;StockFront.Contracts/**/*.cs;StockFront.Auth/**/*.cs" />
+    <None Remove="StockFront.Data/**;StockFront.Contracts/**;StockFront.Auth/**" />
+    <EmbeddedResource Remove="StockFront.Data/**;StockFront.Contracts/**;StockFront.Auth/**" />
+    <Page Remove="StockFront.Data/**;StockFront.Contracts/**;StockFront.Auth/**" />
+    <Resource Remove="StockFront.Data/**;StockFront.Contracts/**;StockFront.Auth/**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="StockFront.Contracts/StockFront.Contracts.csproj" />
+    <ProjectReference Include="StockFront.Auth/StockFront.Auth.csproj" />
+    <ProjectReference Include="StockFront.Data/StockFront.Data.csproj" />
   </ItemGroup>
 
 </Project>
