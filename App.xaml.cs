@@ -63,7 +63,11 @@ public partial class App : Application
     private void ShowLoginFlow()
     {
         var login = _services.GetRequiredService<LoginView>();
-        if (login.ShowDialog() != true)
+        login.RegisterRequested += OnRegisterRequested;
+        var signedIn = login.ShowDialog() == true;
+        login.RegisterRequested -= OnRegisterRequested;
+
+        if (!signedIn)
         {
             Shutdown();
             return;
@@ -74,6 +78,20 @@ public partial class App : Application
         MainWindow = main;
         ShutdownMode = ShutdownMode.OnMainWindowClose;
         main.Show();
+    }
+
+    /// <summary>
+    /// Open the registration dialog on top of the (still-open) login dialog. On success, return to
+    /// login with the new username prefilled so the user can sign in.
+    /// </summary>
+    private void OnRegisterRequested(object? sender, EventArgs e)
+    {
+        var login = (LoginView)sender!;
+        var register = _services.GetRequiredService<RegisterView>();
+        register.Owner = login;
+
+        if (register.ShowDialog() == true && register.RegisteredUsername is { } username)
+            login.NotifyRegistered(username);
     }
 
     private void OnLogoutRequested(object? sender, EventArgs e)
@@ -97,6 +115,8 @@ public partial class App : Application
 
         services.AddTransient<LoginViewModel>();
         services.AddTransient<LoginView>();
+        services.AddTransient<RegisterViewModel>();
+        services.AddTransient<RegisterView>();
         services.AddTransient<MainViewModel>();
         services.AddTransient<MainWindow>();
 

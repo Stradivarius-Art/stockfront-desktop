@@ -16,7 +16,7 @@ public static class DatabaseBootstrapper
     // Default administrator seeded only into an empty users table. MUST be changed after the first
     // sign-in; it exists so a fresh database isn't locked out of its own admin area.
     private const string DefaultAdminUsername = "admin";
-    private const string DefaultAdminPassword = "admin";
+    private const string DefaultAdminPassword = "admin123";
     private const string DefaultAdminDisplayName = "Администратор";
 
     public static async Task InitializeAsync(IServiceProvider services, CancellationToken ct = default)

@@ -62,6 +62,11 @@
                              PasswordChanged="PasswordBox_OnPasswordChanged" />
             </Border>
 
+            <TextBlock Text="{Binding InfoMessage}"
+                       Foreground="#3F9D52" FontSize="13"
+                       TextWrapping="Wrap" Margin="2,14,0,0"
+                       Visibility="{Binding InfoMessage, Converter={StaticResource NullToCollapsedConverter}}" />
+
             <TextBlock Text="{Binding ErrorMessage}"
                        Foreground="{StaticResource ErrorBrush}" FontSize="13"
                        TextWrapping="Wrap" Margin="2,14,0,0"
@@ -89,6 +94,14 @@
                     </ControlTemplate>
                 </Button.Template>
             </Button>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,16,0,0">
+                <TextBlock Text="Нет аккаунта?" Foreground="{StaticResource SecondaryTextBrush}"
+                           FontSize="13" VerticalAlignment="Center" />
+                <Button Content="Зарегистрироваться" Command="{Binding GoToRegisterCommand}"
+                        Margin="6,0,0,0" Background="Transparent" BorderThickness="0" Cursor="Hand"
+                        Foreground="{StaticResource AccentBrush}" FontSize="13" FontWeight="SemiBold" />
+            </StackPanel>
         </StackPanel>
     </Border>
 </Window>

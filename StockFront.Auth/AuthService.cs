@@ -55,12 +55,13 @@ public sealed class AuthService : IAuthService
         UserRole role = UserRole.Customer,
         CancellationToken ct = default)
     {
-        if (string.IsNullOrWhiteSpace(username))
-            return AuthResult.Fail("Укажите логин.");
-        if (string.IsNullOrEmpty(password))
-            return AuthResult.Fail("Укажите пароль.");
-        if (string.IsNullOrWhiteSpace(displayName))
-            return AuthResult.Fail("Укажите отображаемое имя.");
+        // Same rules the UI shows — enforced here too, so they hold when the UI is bypassed.
+        var error = CredentialRules.ValidateUsername(username)
+                    ?? CredentialRules.ValidatePassword(password)
+                    ?? CredentialRules.ValidateDisplayName(displayName)
+                    ?? CredentialRules.ValidateEmail(email);
+        if (error is not null)
+            return AuthResult.Fail(error);
 
         username = username.Trim();
         email = string.IsNullOrWhiteSpace(email) ? null : email.Trim();
