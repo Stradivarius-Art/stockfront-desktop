@@ -42,7 +42,9 @@ public partial class App : Application
         try
         {
             // Apply migrations and seed the default admin if the users table is empty.
-            DatabaseBootstrapper.InitializeAsync(_services).GetAwaiter().GetResult();
+            // Run on the thread pool (not via a bare GetResult on the UI thread): the async DB work
+            // captures no UI SynchronizationContext there, so blocking the UI thread can't deadlock.
+            Task.Run(() => DatabaseBootstrapper.InitializeAsync(_services)).GetAwaiter().GetResult();
         }
         catch (Exception ex)
         {
