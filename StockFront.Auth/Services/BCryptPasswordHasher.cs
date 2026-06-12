@@ -1,6 +1,6 @@
 using StockFront.Contracts.Auth;
 
-namespace StockFront.Auth;
+namespace StockFront.Auth.Services;
 
 /// <summary>
 /// <see cref="IPasswordHasher"/> backed by BCrypt (BCrypt.Net-Next). BCrypt is deliberately slow,

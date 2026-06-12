@@ -1,6 +1,6 @@
 using StockFront.Contracts.Auth;
 
-namespace StockFront.Auth;
+namespace StockFront.Auth.Services;
 
 /// <summary>
 /// The in-memory session. A single instance is registered as a singleton and exposed both as the

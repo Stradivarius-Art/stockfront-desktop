@@ -1,7 +1,7 @@
 using StockFront.Contracts.Auth;
 using StockFront.Contracts.Persistence;
 
-namespace StockFront.Auth;
+namespace StockFront.Auth.Services;
 
 /// <summary>
 /// Local (2-tier) authentication: verify a password against the stored hash, then populate the

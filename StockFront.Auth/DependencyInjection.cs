@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using StockFront.Auth.Services;
 using StockFront.Contracts.Auth;
 
 namespace StockFront.Auth;
