@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <!-- StockFront.Data is its own project; don't pull its sources into the WPF app's glob. -->
+  <ItemGroup>
+    <Compile Remove="StockFront.Data/**/*.cs" />
+    <None Remove="StockFront.Data/**" />
+    <EmbeddedResource Remove="StockFront.Data/**" />
+    <Page Remove="StockFront.Data/**" />
+    <Resource Remove="StockFront.Data/**" />
+  </ItemGroup>
+
+</Project>

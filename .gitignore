@@ -1,0 +1,12 @@
+# Local secrets
+.env
+
+# Build output
+bin/
+obj/
+
+# EF Core generated SQL scripts
+*.sql
+
+CLAUDE.md
+.claude

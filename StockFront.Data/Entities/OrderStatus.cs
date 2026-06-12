@@ -1,0 +1,27 @@
+namespace StockFront.Data.Entities;
+
+/// <summary>
+/// Order lifecycle states (see diagrams/diagram_state.png):
+/// New → Reserved → Paid → Shipped → Completed, with Cancelled as a terminal branch.
+/// Stored in the database as a string for readability.
+/// </summary>
+public enum OrderStatus
+{
+    /// <summary>Новая — created, stock not yet reserved.</summary>
+    New,
+
+    /// <summary>Зарезервирована — stock reserved in the warehouse.</summary>
+    Reserved,
+
+    /// <summary>Оплачена — paid by the customer.</summary>
+    Paid,
+
+    /// <summary>Отгружена — shipped, stock written off.</summary>
+    Shipped,
+
+    /// <summary>Завершена — fulfilled and closed.</summary>
+    Completed,
+
+    /// <summary>Отменена — cancelled, any reservation released.</summary>
+    Cancelled
+}
