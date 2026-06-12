@@ -18,6 +18,7 @@ public sealed class AppDbContext : DbContext
     public DbSet<StockItem> StockItems => Set<StockItem>();
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderLine> OrderLines => Set<OrderLine>();
+    public DbSet<User> Users => Set<User>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
