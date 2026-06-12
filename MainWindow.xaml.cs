@@ -4,8 +4,8 @@ using stockfront.ViewModels;
 namespace stockfront;
 
 /// <summary>
-/// The main shell shown after a successful sign-in. Code-behind only forwards the ViewModel's
-/// logout request up to the host, which returns to the login window.
+/// The main shell shown after a successful sign-in (top bar + sidebar + content). Code-behind only
+/// loads the initial page and forwards the ViewModel's logout request up to the host.
 /// </summary>
 public partial class MainWindow : Window
 {
@@ -21,6 +21,7 @@ public partial class MainWindow : Window
         DataContext = viewModel;
 
         _viewModel.LogoutRequested += OnLogoutRequested;
+        Loaded += async (_, _) => await _viewModel.InitializeAsync();
     }
 
     private void OnLogoutRequested() => LogoutRequested?.Invoke(this, EventArgs.Empty);

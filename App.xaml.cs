@@ -117,6 +117,7 @@ public partial class App : Application
         services.AddTransient<LoginView>();
         services.AddTransient<RegisterViewModel>();
         services.AddTransient<RegisterView>();
+        services.AddTransient<DashboardViewModel>();
         services.AddTransient<MainViewModel>();
         services.AddTransient<MainWindow>();
 

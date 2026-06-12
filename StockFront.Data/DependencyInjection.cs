@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using StockFront.Contracts.Dashboard;
 using StockFront.Contracts.Persistence;
 using StockFront.Data.Repositories;
 
@@ -20,6 +21,7 @@ public static class DependencyInjection
             ServiceLifetime.Transient);
 
         services.AddTransient<IUserRepository, UserRepository>();
+        services.AddTransient<IDashboardRepository, DashboardRepository>();
 
         return services;
     }

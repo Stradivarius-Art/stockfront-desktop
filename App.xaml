@@ -2,7 +2,9 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:stockfront"
-             xmlns:conv="clr-namespace:stockfront.Converters">
+             xmlns:conv="clr-namespace:stockfront.Converters"
+             xmlns:vm="clr-namespace:stockfront.ViewModels"
+             xmlns:views="clr-namespace:stockfront.Views">
     <Application.Resources>
         <conv:NullToCollapsedConverter x:Key="NullToCollapsedConverter" />
 
@@ -12,9 +14,18 @@
         <SolidColorBrush x:Key="AccentHoverBrush" Color="#C9551F" />
         <SolidColorBrush x:Key="WorkAreaBrush" Color="#F2F0EB" />
         <SolidColorBrush x:Key="CardBrush" Color="#FFFFFF" />
+        <SolidColorBrush x:Key="ActiveNavBrush" Color="#FBEDE4" />
         <SolidColorBrush x:Key="HeadingBrush" Color="#2B2B2B" />
         <SolidColorBrush x:Key="SecondaryTextBrush" Color="#8A8A8A" />
         <SolidColorBrush x:Key="DividerBrush" Color="#EDEAE4" />
         <SolidColorBrush x:Key="ErrorBrush" Color="#D24B4B" />
+
+        <!-- Map page ViewModels to their views, so the shell's ContentControl renders the right page. -->
+        <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+            <views:DashboardView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:PlaceholderViewModel}">
+            <views:PlaceholderView />
+        </DataTemplate>
     </Application.Resources>
 </Application>

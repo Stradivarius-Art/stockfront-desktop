@@ -1,0 +1,181 @@
+<UserControl x:Class="stockfront.Views.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:stockfront.ViewModels"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=vm:DashboardViewModel}"
+             FontFamily="Segoe UI">
+
+    <UserControl.Resources>
+        <Style x:Key="MetricCard" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource CardBrush}" />
+            <Setter Property="CornerRadius" Value="16" />
+            <Setter Property="Padding" Value="22,18" />
+        </Style>
+        <Style x:Key="MetricLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}" />
+            <Setter Property="FontSize" Value="13" />
+        </Style>
+        <Style x:Key="MetricValue" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+            <Setter Property="FontSize" Value="30" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Margin" Value="0,8,0,0" />
+        </Style>
+        <Style x:Key="ColHeader" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}" />
+            <Setter Property="FontSize" Value="13" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="32,28">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Heading + primary action -->
+        <Grid Grid.Row="0" Margin="0,0,0,24">
+            <TextBlock Text="Складской учёт" FontSize="26" FontWeight="Bold"
+                       Foreground="{StaticResource HeadingBrush}" VerticalAlignment="Center" />
+            <Button Content="+ Приёмка товара" HorizontalAlignment="Right" VerticalAlignment="Center"
+                    Height="44" Padding="22,0" Cursor="Hand" ToolTip="В разработке"
+                    Foreground="White" FontSize="14" FontWeight="SemiBold" BorderThickness="0">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bg" CornerRadius="12" Background="{StaticResource AccentBrush}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="{StaticResource AccentHoverBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </Grid>
+
+        <!-- Metric cards -->
+        <UniformGrid Grid.Row="1" Rows="1" Columns="4" Margin="0,0,0,24">
+            <Border Style="{StaticResource MetricCard}" Margin="0,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="Товаров на складе" Style="{StaticResource MetricLabel}" />
+                    <TextBlock Text="{Binding TotalUnitsText}" Style="{StaticResource MetricValue}" />
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource MetricCard}" Margin="8,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="Активных заказов" Style="{StaticResource MetricLabel}" />
+                    <TextBlock Text="{Binding ActiveOrdersText}" Style="{StaticResource MetricValue}" />
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource MetricCard}" Margin="8,0,8,0">
+                <StackPanel>
+                    <TextBlock Text="Низкий остаток" Style="{StaticResource MetricLabel}" />
+                    <TextBlock Text="{Binding LowStockText}" Style="{StaticResource MetricValue}" />
+                </StackPanel>
+            </Border>
+            <Border Style="{StaticResource MetricCard}" Margin="8,0,0,0">
+                <StackPanel>
+                    <TextBlock Text="Выручка за месяц" Style="{StaticResource MetricLabel}" />
+                    <TextBlock Text="{Binding RevenueText}" Style="{StaticResource MetricValue}" />
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+
+        <!-- Products table -->
+        <Border Grid.Row="2" Background="{StaticResource CardBrush}" CornerRadius="16" Padding="24,8">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!-- Header -->
+                <Grid Grid.Row="0" Margin="0,12,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="160" />
+                        <ColumnDefinition Width="120" />
+                        <ColumnDefinition Width="120" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Товар" Style="{StaticResource ColHeader}" />
+                    <TextBlock Grid.Column="1" Text="Артикул" Style="{StaticResource ColHeader}" />
+                    <TextBlock Grid.Column="2" Text="Остаток" Style="{StaticResource ColHeader}" />
+                    <TextBlock Grid.Column="3" Text="Статус" Style="{StaticResource ColHeader}" />
+                </Grid>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding Products}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="{StaticResource DividerBrush}"
+                                        BorderThickness="0,1,0,0" Padding="0,14">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="160" />
+                                            <ColumnDefinition Width="120" />
+                                            <ColumnDefinition Width="120" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" Text="{Binding Name}" FontSize="14"
+                                                   Foreground="{StaticResource HeadingBrush}" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Sku}" FontSize="14"
+                                                   Foreground="{StaticResource SecondaryTextBrush}" VerticalAlignment="Center" />
+                                        <TextBlock Grid.Column="2" Text="{Binding Stock}" FontSize="14"
+                                                   Foreground="{StaticResource HeadingBrush}" VerticalAlignment="Center" />
+
+                                        <!-- Status badge -->
+                                        <Border Grid.Column="3" CornerRadius="10" Padding="10,3"
+                                                HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="#D9F0DD" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Status}" Value="Low">
+                                                            <Setter Property="Background" Value="#F7EAC9" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}" Value="OutOfStock">
+                                                            <Setter Property="Background" Value="#F8D7D7" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <TextBlock FontSize="12" FontWeight="SemiBold">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Text" Value="в наличии" />
+                                                        <Setter Property="Foreground" Value="#3F9D52" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Status}" Value="Low">
+                                                                <Setter Property="Text" Value="мало" />
+                                                                <Setter Property="Foreground" Value="#B8862E" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Status}" Value="OutOfStock">
+                                                                <Setter Property="Text" Value="нет" />
+                                                                <Setter Property="Foreground" Value="#D24B4B" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+
+        <TextBlock Grid.Row="2" Text="{Binding Error}" Foreground="{StaticResource ErrorBrush}"
+                   VerticalAlignment="Bottom" Margin="4"
+                   Visibility="{Binding Error, Converter={StaticResource NullToCollapsedConverter}}" />
+    </Grid>
+</UserControl>
