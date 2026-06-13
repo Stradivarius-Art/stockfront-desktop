@@ -55,45 +55,80 @@ public partial class App : Application
             return;
         }
 
-        ShowLoginFlow();
+        ShowWelcomeFlow();
     }
 
     /// <summary>
-    /// Show the login dialog; on success open the main window, on cancel quit. Logging out from the
-    /// main window brings the user back here.
+    /// Show the welcome window first. From it the user opens the login or registration dialog; a
+    /// successful sign-in (set via <see cref="Window.DialogResult"/>) closes the welcome window and
+    /// opens the main window. Closing the welcome window without signing in quits the app.
     /// </summary>
-    private void ShowLoginFlow()
+    private void ShowWelcomeFlow()
+    {
+        var welcome = _services.GetRequiredService<WelcomeView>();
+
+        welcome.LoginRequested += (_, _) =>
+        {
+            if (RunLoginDialog(welcome))
+                welcome.DialogResult = true;
+        };
+        welcome.RegisterRequested += (_, _) =>
+        {
+            // Register, then drop straight into login with the new username prefilled.
+            if (RunRegisterDialog(welcome) is { } username && RunLoginDialog(welcome, username))
+                welcome.DialogResult = true;
+        };
+
+        if (welcome.ShowDialog() == true)
+            OpenMainWindow();
+        else
+            Shutdown();
+    }
+
+    /// <summary>
+    /// Show the login dialog owned by <paramref name="owner"/> (null for a standalone window).
+    /// Keeps the login↔register cross-link working and optionally prefills a username. Returns
+    /// <c>true</c> once the user has signed in.
+    /// </summary>
+    private bool RunLoginDialog(Window? owner, string? prefillUsername = null)
     {
         var login = _services.GetRequiredService<LoginView>();
-        login.RegisterRequested += OnRegisterRequested;
+        login.Owner = owner;
+        if (prefillUsername is not null)
+            login.NotifyRegistered(prefillUsername);
+
+        login.RegisterRequested += OnRegisterFromLogin;
         var signedIn = login.ShowDialog() == true;
-        login.RegisterRequested -= OnRegisterRequested;
-
-        if (!signedIn)
-        {
-            Shutdown();
-            return;
-        }
-
-        var main = _services.GetRequiredService<MainWindow>();
-        main.LogoutRequested += OnLogoutRequested;
-        MainWindow = main;
-        ShutdownMode = ShutdownMode.OnMainWindowClose;
-        main.Show();
+        login.RegisterRequested -= OnRegisterFromLogin;
+        return signedIn;
     }
 
     /// <summary>
     /// Open the registration dialog on top of the (still-open) login dialog. On success, return to
     /// login with the new username prefilled so the user can sign in.
     /// </summary>
-    private void OnRegisterRequested(object? sender, EventArgs e)
+    private void OnRegisterFromLogin(object? sender, EventArgs e)
     {
         var login = (LoginView)sender!;
-        var register = _services.GetRequiredService<RegisterView>();
-        register.Owner = login;
-
-        if (register.ShowDialog() == true && register.RegisteredUsername is { } username)
+        if (RunRegisterDialog(login) is { } username)
             login.NotifyRegistered(username);
+    }
+
+    /// <summary>Show the registration dialog; returns the new username, or null if cancelled.</summary>
+    private string? RunRegisterDialog(Window owner)
+    {
+        var register = _services.GetRequiredService<RegisterView>();
+        register.Owner = owner;
+        return register.ShowDialog() == true ? register.RegisteredUsername : null;
+    }
+
+    private void OpenMainWindow()
+    {
+        var main = _services.GetRequiredService<MainWindow>();
+        main.LogoutRequested += OnLogoutRequested;
+        MainWindow = main;
+        ShutdownMode = ShutdownMode.OnMainWindowClose;
+        main.Show();
     }
 
     private void OnLogoutRequested(object? sender, EventArgs e)
@@ -105,7 +140,11 @@ public partial class App : Application
         ShutdownMode = ShutdownMode.OnExplicitShutdown;
         main.Close();
 
-        ShowLoginFlow();
+        // Logging out returns straight to the login form (not the welcome window).
+        if (RunLoginDialog(owner: null))
+            OpenMainWindow();
+        else
+            Shutdown();
     }
 
     private static ServiceProvider BuildServiceProvider(string connectionString)
@@ -115,6 +154,8 @@ public partial class App : Application
         services.AddDataLayer(connectionString);   // AppDbContext + repositories
         services.AddAuthModule();                   // IAuthService, ICurrentUser, hasher
 
+        services.AddTransient<WelcomeViewModel>();
+        services.AddTransient<WelcomeView>();
         services.AddTransient<LoginViewModel>();
         services.AddTransient<LoginView>();
         services.AddTransient<RegisterViewModel>();

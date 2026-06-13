@@ -4,6 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:stockfront.ViewModels"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type=vm:DashboardViewModel}"
              FontFamily="Segoe UI">
@@ -41,12 +42,16 @@
         <Grid Grid.Row="0" Margin="0,0,0,24">
             <TextBlock Text="Складской учёт" FontSize="26" FontWeight="Bold"
                        Foreground="{StaticResource HeadingBrush}" VerticalAlignment="Center" />
-            <Button Content="+ Приёмка товара" HorizontalAlignment="Right" VerticalAlignment="Center"
-                    Height="44" Padding="22,0" Cursor="Hand" ToolTip="В разработке"
+            <Button HorizontalAlignment="Right" VerticalAlignment="Center"
+                    Height="44" MinWidth="190" Cursor="Hand" ToolTip="В разработке"
                     Foreground="White" FontSize="14" FontWeight="SemiBold" BorderThickness="0">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <iconPacks:PackIconMaterial Kind="Plus" Width="16" Height="16" VerticalAlignment="Center" />
+                    <TextBlock Text="Приёмка товара" Margin="10,0,0,0" VerticalAlignment="Center" />
+                </StackPanel>
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="Bg" CornerRadius="12" Background="{StaticResource AccentBrush}">
+                        <Border x:Name="Bg" CornerRadius="12" Padding="24,0" Background="{StaticResource AccentBrush}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                         <ControlTemplate.Triggers>

@@ -4,10 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:stockfront.ViewModels"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:LoginViewModel}"
         Title="StockFront — Вход"
-        Height="520" Width="420"
+        Width="420" SizeToContent="Height"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource WorkAreaBrush}"
@@ -16,8 +17,7 @@
     <!-- Centered card -->
     <Border Background="{StaticResource CardBrush}"
             CornerRadius="20" Margin="28"
-            Padding="36,32"
-            VerticalAlignment="Center">
+            Padding="36,32">
         <Border.Effect>
             <DropShadowEffect Color="#22000000" BlurRadius="24" ShadowDepth="0" />
         </Border.Effect>
@@ -26,8 +26,9 @@
             <!-- Brand -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Border Background="{StaticResource AccentBrush}" Width="40" Height="40" CornerRadius="10">
-                    <TextBlock Text="S" Foreground="White" FontWeight="Bold" FontSize="22"
-                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <iconPacks:PackIconMaterial Kind="PackageVariantClosed" Foreground="White"
+                                                Width="20" Height="20"
+                                                HorizontalAlignment="Center" VerticalAlignment="Center" />
                 </Border>
                 <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                     <TextBlock Text="StockFront" FontSize="20" FontWeight="Bold"

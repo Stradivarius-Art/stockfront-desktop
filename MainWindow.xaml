@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:stockfront.ViewModels"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
         Title="StockFront — Складской учёт"
@@ -53,8 +54,9 @@
                 <!-- Brand -->
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
                     <Border Background="{StaticResource AccentBrush}" Width="36" Height="36" CornerRadius="9">
-                        <TextBlock Text="S" Foreground="White" FontWeight="Bold" FontSize="20"
-                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <iconPacks:PackIconMaterial Kind="PackageVariantClosed" Foreground="White"
+                                                    Width="18" Height="18"
+                                                    HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                         <TextBlock Text="StockFront" FontSize="18" FontWeight="Bold"
@@ -68,9 +70,19 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                     <Border Background="{StaticResource WorkAreaBrush}" CornerRadius="18" Width="220" Height="36"
                             Margin="0,0,16,0" ToolTip="В разработке">
-                        <TextBlock Text="🔍  поиск товара" Foreground="{StaticResource SecondaryTextBrush}"
-                                   FontSize="13" VerticalAlignment="Center" Margin="14,0" />
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0">
+                            <iconPacks:PackIconMaterial Kind="Magnify" Width="15" Height="15"
+                                                        Foreground="{StaticResource SecondaryTextBrush}"
+                                                        VerticalAlignment="Center" />
+                            <TextBlock Text="поиск товара" Foreground="{StaticResource SecondaryTextBrush}"
+                                       FontSize="13" VerticalAlignment="Center" Margin="8,0,0,0" />
+                        </StackPanel>
                     </Border>
+
+                    <iconPacks:PackIconMaterial Kind="BellOutline" Width="20" Height="20"
+                                                Foreground="{StaticResource SecondaryTextBrush}"
+                                                VerticalAlignment="Center" Margin="0,0,16,0"
+                                                ToolTip="В разработке" />
 
                     <StackPanel VerticalAlignment="Center" Margin="0,0,12,0">
                         <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="14"
@@ -83,9 +95,22 @@
                                    HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </Border>
                     <Button Content="Выйти" Command="{Binding LogoutCommand}"
-                            Margin="16,0,0,0" Padding="14,8" Cursor="Hand"
-                            Foreground="{StaticResource AccentBrush}" Background="Transparent"
-                            BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" />
+                            Margin="16,0,0,0" Cursor="Hand" FontSize="14"
+                            Foreground="{StaticResource AccentBrush}" BorderThickness="0">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="Bg" CornerRadius="10" Padding="16,8" Background="Transparent"
+                                        BorderBrush="{StaticResource AccentBrush}" BorderThickness="1">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Bg" Property="Background" Value="{StaticResource ActiveNavBrush}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
                 </StackPanel>
             </Grid>
         </Border>
@@ -99,16 +124,41 @@
 
             <Border Grid.Column="0" Background="{StaticResource CardBrush}">
                 <StackPanel Margin="0,16">
-                    <RadioButton Style="{StaticResource NavItem}" GroupName="nav" Content="Дашборд" IsChecked="True"
-                                 Command="{Binding NavigateCommand}" CommandParameter="dashboard" />
-                    <RadioButton Style="{StaticResource NavItem}" GroupName="nav" Content="Склад"
-                                 Command="{Binding NavigateCommand}" CommandParameter="warehouse" />
-                    <RadioButton Style="{StaticResource NavItem}" GroupName="nav" Content="Витрина"
-                                 Command="{Binding NavigateCommand}" CommandParameter="storefront" />
-                    <RadioButton Style="{StaticResource NavItem}" GroupName="nav" Content="Заказы"
-                                 Command="{Binding NavigateCommand}" CommandParameter="orders" />
-                    <RadioButton Style="{StaticResource NavItem}" GroupName="nav" Content="Отчёты"
-                                 Command="{Binding NavigateCommand}" CommandParameter="reports" />
+                    <RadioButton Style="{StaticResource NavItem}" GroupName="nav" IsChecked="True"
+                                 Command="{Binding NavigateCommand}" CommandParameter="dashboard">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="ViewDashboardOutline" Width="18" Height="18" VerticalAlignment="Center" />
+                            <TextBlock Text="Дашборд" Margin="14,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </RadioButton>
+                    <RadioButton Style="{StaticResource NavItem}" GroupName="nav"
+                                 Command="{Binding NavigateCommand}" CommandParameter="warehouse">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="Warehouse" Width="18" Height="18" VerticalAlignment="Center" />
+                            <TextBlock Text="Склад" Margin="14,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </RadioButton>
+                    <RadioButton Style="{StaticResource NavItem}" GroupName="nav"
+                                 Command="{Binding NavigateCommand}" CommandParameter="storefront">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="StorefrontOutline" Width="18" Height="18" VerticalAlignment="Center" />
+                            <TextBlock Text="Витрина" Margin="14,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </RadioButton>
+                    <RadioButton Style="{StaticResource NavItem}" GroupName="nav"
+                                 Command="{Binding NavigateCommand}" CommandParameter="orders">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="ClipboardListOutline" Width="18" Height="18" VerticalAlignment="Center" />
+                            <TextBlock Text="Заказы" Margin="14,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </RadioButton>
+                    <RadioButton Style="{StaticResource NavItem}" GroupName="nav"
+                                 Command="{Binding NavigateCommand}" CommandParameter="reports">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="ChartBar" Width="18" Height="18" VerticalAlignment="Center" />
+                            <TextBlock Text="Отчёты" Margin="14,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </RadioButton>
                 </StackPanel>
             </Border>
 
