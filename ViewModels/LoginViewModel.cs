@@ -23,7 +23,6 @@ public sealed partial class LoginViewModel : ObservableObject
     public event Action? RegisterRequested;
 
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(LoginCommand))]
     private string _username = string.Empty;
 
     private string _password = string.Empty;
@@ -35,11 +34,7 @@ public sealed partial class LoginViewModel : ObservableObject
     public string Password
     {
         private get => _password;
-        set
-        {
-            _password = value;
-            LoginCommand.NotifyCanExecuteChanged();
-        }
+        set => _password = value;
     }
 
     [ObservableProperty]
@@ -61,13 +56,23 @@ public sealed partial class LoginViewModel : ObservableObject
         InfoMessage = "Регистрация успешна. Войдите под новым логином.";
     }
 
-    private bool CanLogin() => !IsBusy && !string.IsNullOrWhiteSpace(Username) && _password.Length > 0;
+    // The button stays enabled even with empty fields (we don't lock the user out before they type);
+    // it's only disabled mid-request to prevent a double submit. Empty fields surface as a validation
+    // message on submit instead.
+    private bool CanLogin() => !IsBusy;
 
     [RelayCommand(CanExecute = nameof(CanLogin))]
     private async Task LoginAsync()
     {
         ErrorMessage = null;
         InfoMessage = null;
+
+        if (string.IsNullOrWhiteSpace(Username) || _password.Length == 0)
+        {
+            ErrorMessage = "Введите логин и пароль.";
+            return;
+        }
+
         IsBusy = true;
         try
         {
