@@ -5,8 +5,9 @@ namespace StockFront.Data.Seeding;
 
 /// <summary>
 /// Fills the database with a small, illustrative dataset (categories, products with stock, and a
-/// few orders) so the dashboard isn't empty during development. Idempotent: it does nothing once
-/// any product exists, so it's safe to run on every startup. Not for production data.
+/// few orders) so the dashboard isn't empty during development. Run on demand via the terminal
+/// command <c>-- --seed</c> (never on startup). Idempotent: it does nothing once any product
+/// exists, so it's safe to run repeatedly. Not for production data.
 /// </summary>
 public static class TestDataSeeder
 {

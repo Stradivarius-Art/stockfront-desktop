@@ -9,8 +9,9 @@ using StockFront.Data.Seeding;
 namespace stockfront.Infrastructure;
 
 /// <summary>
-/// One-time startup work: bring the schema up to date and make sure there is at least one account
-/// to sign in with. Runs before any window is shown.
+/// Database maintenance operations. These are deliberate, opt-in actions invoked from the terminal
+/// (see <see cref="CommandLineRunner"/>) — never from the normal application startup path, so a
+/// regular launch never migrates or writes seed data and can't clobber real user data.
 /// </summary>
 public static class DatabaseBootstrapper
 {
@@ -20,20 +21,25 @@ public static class DatabaseBootstrapper
     private const string DefaultAdminPassword = "admin123";
     private const string DefaultAdminDisplayName = "Администратор";
 
-    /// <summary>Set this env var (1/true/yes) to fill the database with illustrative test data.</summary>
-    private const string SeedTestDataEnvVar = "STOCKFRONT_SEED_TESTDATA";
-
-    public static async Task InitializeAsync(IServiceProvider services, CancellationToken ct = default)
+    /// <summary>Bring the schema up to date by applying any pending EF Core migrations.</summary>
+    public static async Task MigrateAsync(IServiceProvider services, CancellationToken ct = default)
     {
         await using var db = services.GetRequiredService<AppDbContext>();
         await db.Database.MigrateAsync(ct);
+    }
 
-        if (TestDataSeedingEnabled())
-            await TestDataSeeder.SeedAsync(db, ct);
-
+    /// <summary>
+    /// Create the default administrator if (and only if) the users table is empty. Idempotent: does
+    /// nothing once any account exists, so it never overwrites real users.
+    /// </summary>
+    public static async Task SeedAdminAsync(IServiceProvider services, CancellationToken ct = default)
+    {
         var users = services.GetRequiredService<IUserRepository>();
         if (await users.AnyAsync(ct))
+        {
+            Debug.WriteLine("Users already exist — default admin not seeded.");
             return;
+        }
 
         var auth = services.GetRequiredService<IAuthService>();
         var result = await auth.RegisterAsync(
@@ -43,12 +49,13 @@ public static class DatabaseBootstrapper
         if (result.Succeeded)
             Debug.WriteLine($"Seeded default admin '{DefaultAdminUsername}' — change this password.");
         else
-            Debug.WriteLine($"Failed to seed default admin: {result.Error}");
+            throw new InvalidOperationException($"Failed to seed default admin: {result.Error}");
     }
 
-    private static bool TestDataSeedingEnabled()
+    /// <summary>Fill the database with illustrative demo data (idempotent — see TestDataSeeder).</summary>
+    public static async Task SeedTestDataAsync(IServiceProvider services, CancellationToken ct = default)
     {
-        var value = Environment.GetEnvironmentVariable(SeedTestDataEnvVar);
-        return value is "1" or "true" or "TRUE" or "yes" or "YES";
+        await using var db = services.GetRequiredService<AppDbContext>();
+        await TestDataSeeder.SeedAsync(db, ct);
     }
 }

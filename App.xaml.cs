@@ -39,17 +39,25 @@ public partial class App : Application
 
         _services = BuildServiceProvider(connectionString);
 
+        // Database maintenance commands (--migrate / --seed-admin / --seed) run instead of the GUI.
+        // A normal launch never migrates or seeds — the schema is prepared via these terminal
+        // commands, so starting the app can't clobber existing data. Run the async DB work on the
+        // thread pool (not a bare GetResult on the UI thread): it captures no UI SynchronizationContext
+        // there, so blocking the UI thread can't deadlock.
         try
         {
-            // Apply migrations and seed the default admin if the users table is empty.
-            // Run on the thread pool (not via a bare GetResult on the UI thread): the async DB work
-            // captures no UI SynchronizationContext there, so blocking the UI thread can't deadlock.
-            Task.Run(() => DatabaseBootstrapper.InitializeAsync(_services)).GetAwaiter().GetResult();
+            var handled = Task.Run(() => CommandLineRunner.TryRunAsync(_services, e.Args))
+                .GetAwaiter().GetResult();
+            if (handled)
+            {
+                Shutdown(0);
+                return;
+            }
         }
         catch (Exception ex)
         {
             MessageBox.Show(
-                $"Не удалось подготовить базу данных:\n{ex.Message}",
+                $"Не удалось выполнить команду обслуживания базы данных:\n{ex.Message}",
                 "StockFront", MessageBoxButton.OK, MessageBoxImage.Error);
             Shutdown(1);
             return;
