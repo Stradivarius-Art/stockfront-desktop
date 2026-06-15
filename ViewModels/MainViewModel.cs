@@ -14,12 +14,15 @@ public sealed partial class MainViewModel : ObservableObject
     private readonly ICurrentUser _currentUser;
     private readonly IAuthService _auth;
     private readonly DashboardViewModel _dashboard;
+    private readonly WarehouseViewModel _warehouse;
 
-    public MainViewModel(ICurrentUser currentUser, IAuthService auth, DashboardViewModel dashboard)
+    public MainViewModel(
+        ICurrentUser currentUser, IAuthService auth, DashboardViewModel dashboard, WarehouseViewModel warehouse)
     {
         _currentUser = currentUser;
         _auth = auth;
         _dashboard = dashboard;
+        _warehouse = warehouse;
     }
 
     /// <summary>Raised after the user signs out, so the host can return to the login window.</summary>
@@ -101,6 +104,11 @@ public sealed partial class MainViewModel : ObservableObject
             CurrentPage = _dashboard;
             await _dashboard.LoadAsync();
         }
+        else if (section == "warehouse")
+        {
+            CurrentPage = _warehouse;
+            await _warehouse.LoadAsync();
+        }
         else
         {
             CurrentPage = BuildPlaceholder(section);
@@ -116,11 +124,6 @@ public sealed partial class MainViewModel : ObservableObject
     {
         var (title, description) = (section, Role) switch
         {
-            ("warehouse", UserRole.Admin) =>
-                ("Склад", "Полный доступ: остатки, приёмка, списание и удаление товаров."),
-            ("warehouse", _) =>
-                ("Склад", "Приёмка и списание товаров (без удаления)."),
-
             ("storefront", UserRole.Admin) =>
                 ("Витрина", "Каталог, корзина, оформление и редактирование карточек товаров."),
             ("storefront", _) =>

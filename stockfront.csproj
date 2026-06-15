@@ -13,11 +13,11 @@
   <!-- The sibling projects live in subfolders; keep their sources out of the WPF app's glob
        (we reference them as projects instead). -->
   <ItemGroup>
-    <Compile Remove="StockFront.Data/**/*.cs;StockFront.Contracts/**/*.cs;StockFront.Auth/**/*.cs" />
-    <None Remove="StockFront.Data/**;StockFront.Contracts/**;StockFront.Auth/**" />
-    <EmbeddedResource Remove="StockFront.Data/**;StockFront.Contracts/**;StockFront.Auth/**" />
-    <Page Remove="StockFront.Data/**;StockFront.Contracts/**;StockFront.Auth/**" />
-    <Resource Remove="StockFront.Data/**;StockFront.Contracts/**;StockFront.Auth/**" />
+    <Compile Remove="StockFront.Data/**/*.cs;StockFront.Contracts/**/*.cs;StockFront.Auth/**/*.cs;StockFront.Warehouse/**/*.cs" />
+    <None Remove="StockFront.Data/**;StockFront.Contracts/**;StockFront.Auth/**;StockFront.Warehouse/**" />
+    <EmbeddedResource Remove="StockFront.Data/**;StockFront.Contracts/**;StockFront.Auth/**;StockFront.Warehouse/**" />
+    <Page Remove="StockFront.Data/**;StockFront.Contracts/**;StockFront.Auth/**;StockFront.Warehouse/**" />
+    <Resource Remove="StockFront.Data/**;StockFront.Contracts/**;StockFront.Auth/**;StockFront.Warehouse/**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +30,7 @@
     <ProjectReference Include="StockFront.Contracts/StockFront.Contracts.csproj" />
     <ProjectReference Include="StockFront.Auth/StockFront.Auth.csproj" />
     <ProjectReference Include="StockFront.Data/StockFront.Data.csproj" />
+    <ProjectReference Include="StockFront.Warehouse/StockFront.Warehouse.csproj" />
   </ItemGroup>
 
 </Project>

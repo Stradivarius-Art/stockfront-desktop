@@ -16,20 +16,23 @@ public static class TestDataSeeder
         if (await db.Products.AnyAsync(ct))
             return;
 
-        var tools = new Category { Name = "Электроинструмент" };
-        var accessories = new Category { Name = "Оснастка" };
+        var tools = new Category { Name = "Инструмент" };
+        var consumables = new Category { Name = "Расходники" };
+        var measuring = new Category { Name = "Измерительный" };
+        var fasteners = new Category { Name = "Крепёж" };
 
-        // Mirrors the products shown in the dashboard mock-up, with sensible prices.
-        var drill      = Product("DR-104", "Дрель аккумуляторная", 4990m, tools, quantity: 52);
+        // Mirrors the products shown in the warehouse mock-up (design/stockfront_sklad.png).
+        var drill       = Product("DR-104", "Дрель аккумуляторная", 4990m, tools, quantity: 52);
         var screwdriver = Product("SC-220", "Шуруповёрт сетевой", 3200m, tools, quantity: 8);
-        var bitSet     = Product("BT-032", "Набор бит, 32 шт.", 890m, accessories, quantity: 140);
-        var hammerDrill = Product("PF-880", "Перфоратор SDS-plus", 7600m, tools, quantity: 0);
-        var laserLevel = Product("LV-330", "Уровень лазерный", 5400m, tools, quantity: 24);
-        var grinder    = Product("AG-125", "УШМ 125 мм", 4100m, tools, quantity: 17);
-        var tape       = Product("MT-050", "Рулетка 5 м", 350m, accessories, quantity: 6);
+        var bitSet      = Product("BT-032", "Набор бит, 32 шт.", 890m, consumables, quantity: 140);
+        var hammerDrill = Product("PF-880", "Перфоратор SDS-plus", 8750m, tools, quantity: 0);
+        var laserLevel  = Product("LV-330", "Уровень лазерный", 6400m, measuring, quantity: 24);
+        var cutDisc     = Product("DC-125", "Диск отрезной, 125 мм", 75m, consumables, quantity: 320);
+        var screw       = Product("SR-440", "Шуруп 4×40, упаковка", 210m, fasteners, quantity: 12);
+        var square      = Product("SQ-200", "Угольник столярный", 540m, measuring, quantity: 36);
 
-        db.Categories.AddRange(tools, accessories);
-        db.Products.AddRange(drill, screwdriver, bitSet, hammerDrill, laserLevel, grinder, tape);
+        db.Categories.AddRange(tools, consumables, measuring, fasteners);
+        db.Products.AddRange(drill, screwdriver, bitSet, hammerDrill, laserLevel, cutDisc, screw, square);
 
         // A handful of orders across statuses; paid/completed ones this month drive "Выручка за месяц",
         // new/reserved/paid ones drive "Активных заказов". CreatedAt is set by the database default.
@@ -39,9 +42,9 @@ public static class TestDataSeeder
             Order("Петров П.", OrderStatus.Paid,
                 Line(laserLevel, 1)),
             Order("ООО «Стройка»", OrderStatus.New,
-                Line(screwdriver, 3), Line(tape, 2)),
+                Line(screwdriver, 3), Line(cutDisc, 10)),
             Order("Сидоров А.", OrderStatus.Reserved,
-                Line(grinder, 1)),
+                Line(square, 1)),
             Order("Кузнецов Д.", OrderStatus.Shipped,
                 Line(drill, 1)));
 

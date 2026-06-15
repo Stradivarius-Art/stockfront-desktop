@@ -2,6 +2,7 @@ using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using StockFront.Auth;
 using StockFront.Data;
+using StockFront.Warehouse;
 using stockfront.Infrastructure;
 using stockfront.ViewModels;
 using stockfront.Views;
@@ -161,6 +162,7 @@ public partial class App : Application
 
         services.AddDataLayer(connectionString);   // AppDbContext + repositories
         services.AddAuthModule();                   // IAuthService, ICurrentUser, hasher
+        services.AddWarehouseModule();              // IWarehouseService
 
         services.AddTransient<WelcomeViewModel>();
         services.AddTransient<WelcomeView>();
@@ -169,6 +171,7 @@ public partial class App : Application
         services.AddTransient<RegisterViewModel>();
         services.AddTransient<RegisterView>();
         services.AddTransient<DashboardViewModel>();
+        services.AddTransient<WarehouseViewModel>();
         services.AddTransient<MainViewModel>();
         services.AddTransient<MainWindow>();
 

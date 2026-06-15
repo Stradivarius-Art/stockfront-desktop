@@ -9,6 +9,9 @@
     <Application.Resources>
         <conv:NullToCollapsedConverter x:Key="NullToCollapsedConverter" />
         <conv:StringEqualsConverter x:Key="StringEqualsConverter" />
+        <conv:MoneyToRubleConverter x:Key="MoneyToRubleConverter" />
+        <conv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+        <conv:EqualityConverter x:Key="EqualityConverter" />
         <!-- true → Visible, false → Collapsed. Used to gate sidebar items by the current user's role. -->
         <sys:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
@@ -27,6 +30,9 @@
         <!-- Map page ViewModels to their views, so the shell's ContentControl renders the right page. -->
         <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
             <views:DashboardView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:WarehouseViewModel}">
+            <views:WarehouseView />
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:PlaceholderViewModel}">
             <views:PlaceholderView />

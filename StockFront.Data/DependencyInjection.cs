@@ -22,6 +22,7 @@ public static class DependencyInjection
 
         services.AddTransient<IUserRepository, UserRepository>();
         services.AddTransient<IDashboardRepository, DashboardRepository>();
+        services.AddTransient<IWarehouseRepository, WarehouseRepository>();
 
         return services;
     }
