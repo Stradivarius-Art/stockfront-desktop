@@ -90,10 +90,17 @@
                         <TextBlock Text="{Binding RoleText}" FontSize="12"
                                    HorizontalAlignment="Right" Foreground="{StaticResource SecondaryTextBrush}" />
                     </StackPanel>
-                    <Border Background="{StaticResource AccentBrush}" Width="40" Height="40" CornerRadius="20">
-                        <TextBlock Text="{Binding Initials}" Foreground="White" FontWeight="Bold"
-                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
+                    <Button Command="{Binding NavigateCommand}" CommandParameter="profile"
+                            Cursor="Hand" ToolTip="Профиль" BorderThickness="0" Background="Transparent" Padding="0">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{StaticResource AccentBrush}" Width="40" Height="40" CornerRadius="20">
+                                    <TextBlock Text="{Binding Initials}" Foreground="White" FontWeight="Bold"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
                     <Button Content="Выйти" Command="{Binding LogoutCommand}"
                             Margin="16,0,0,0" Cursor="Hand" FontSize="14"
                             Foreground="{StaticResource AccentBrush}" BorderThickness="0">
@@ -124,7 +131,9 @@
 
             <Border Grid.Column="0" Background="{StaticResource CardBrush}">
                 <StackPanel Margin="0,16">
-                    <RadioButton Style="{StaticResource NavItem}" GroupName="nav" IsChecked="True"
+                    <RadioButton Style="{StaticResource NavItem}" GroupName="nav"
+                                 Visibility="{Binding ShowDashboard, Converter={StaticResource BoolToVisibilityConverter}}"
+                                 IsChecked="{Binding CurrentSection, Converter={StaticResource StringEqualsConverter}, ConverterParameter=dashboard, Mode=OneWay}"
                                  Command="{Binding NavigateCommand}" CommandParameter="dashboard">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="ViewDashboardOutline" Width="18" Height="18" VerticalAlignment="Center" />
@@ -132,6 +141,8 @@
                         </StackPanel>
                     </RadioButton>
                     <RadioButton Style="{StaticResource NavItem}" GroupName="nav"
+                                 Visibility="{Binding ShowWarehouse, Converter={StaticResource BoolToVisibilityConverter}}"
+                                 IsChecked="{Binding CurrentSection, Converter={StaticResource StringEqualsConverter}, ConverterParameter=warehouse, Mode=OneWay}"
                                  Command="{Binding NavigateCommand}" CommandParameter="warehouse">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="Warehouse" Width="18" Height="18" VerticalAlignment="Center" />
@@ -139,6 +150,8 @@
                         </StackPanel>
                     </RadioButton>
                     <RadioButton Style="{StaticResource NavItem}" GroupName="nav"
+                                 Visibility="{Binding ShowStorefront, Converter={StaticResource BoolToVisibilityConverter}}"
+                                 IsChecked="{Binding CurrentSection, Converter={StaticResource StringEqualsConverter}, ConverterParameter=storefront, Mode=OneWay}"
                                  Command="{Binding NavigateCommand}" CommandParameter="storefront">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="StorefrontOutline" Width="18" Height="18" VerticalAlignment="Center" />
@@ -146,6 +159,8 @@
                         </StackPanel>
                     </RadioButton>
                     <RadioButton Style="{StaticResource NavItem}" GroupName="nav"
+                                 Visibility="{Binding ShowOrders, Converter={StaticResource BoolToVisibilityConverter}}"
+                                 IsChecked="{Binding CurrentSection, Converter={StaticResource StringEqualsConverter}, ConverterParameter=orders, Mode=OneWay}"
                                  Command="{Binding NavigateCommand}" CommandParameter="orders">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="ClipboardListOutline" Width="18" Height="18" VerticalAlignment="Center" />
@@ -153,10 +168,21 @@
                         </StackPanel>
                     </RadioButton>
                     <RadioButton Style="{StaticResource NavItem}" GroupName="nav"
+                                 Visibility="{Binding ShowReports, Converter={StaticResource BoolToVisibilityConverter}}"
+                                 IsChecked="{Binding CurrentSection, Converter={StaticResource StringEqualsConverter}, ConverterParameter=reports, Mode=OneWay}"
                                  Command="{Binding NavigateCommand}" CommandParameter="reports">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="ChartBar" Width="18" Height="18" VerticalAlignment="Center" />
                             <TextBlock Text="Отчёты" Margin="14,0,0,0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </RadioButton>
+                    <RadioButton Style="{StaticResource NavItem}" GroupName="nav"
+                                 Visibility="{Binding ShowUsers, Converter={StaticResource BoolToVisibilityConverter}}"
+                                 IsChecked="{Binding CurrentSection, Converter={StaticResource StringEqualsConverter}, ConverterParameter=users, Mode=OneWay}"
+                                 Command="{Binding NavigateCommand}" CommandParameter="users">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="AccountGroupOutline" Width="18" Height="18" VerticalAlignment="Center" />
+                            <TextBlock Text="Пользователи" Margin="14,0,0,0" VerticalAlignment="Center" />
                         </StackPanel>
                     </RadioButton>
                 </StackPanel>

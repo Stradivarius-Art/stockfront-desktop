@@ -3,10 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:stockfront"
              xmlns:conv="clr-namespace:stockfront.Converters"
+             xmlns:sys="clr-namespace:System.Windows.Controls;assembly=PresentationFramework"
              xmlns:vm="clr-namespace:stockfront.ViewModels"
              xmlns:views="clr-namespace:stockfront.Views">
     <Application.Resources>
         <conv:NullToCollapsedConverter x:Key="NullToCollapsedConverter" />
+        <conv:StringEqualsConverter x:Key="StringEqualsConverter" />
+        <!-- true → Visible, false → Collapsed. Used to gate sidebar items by the current user's role. -->
+        <sys:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 
         <!-- StockFront palette (see CLAUDE.md): one orange accent on a warm neutral background. -->
         <Color x:Key="AccentColor">#E0632B</Color>
