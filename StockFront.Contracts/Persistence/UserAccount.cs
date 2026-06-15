@@ -9,7 +9,7 @@ namespace StockFront.Contracts.Persistence;
 /// </summary>
 public sealed record UserAccount(
     int Id,
-    string Username,
+    string Email,
     string DisplayName,
     string PasswordHash,
     UserRole Role,

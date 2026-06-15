@@ -82,8 +82,8 @@ public partial class App : Application
         };
         welcome.RegisterRequested += (_, _) =>
         {
-            // Register, then drop straight into login with the new username prefilled.
-            if (RunRegisterDialog(welcome) is { } username && RunLoginDialog(welcome, username))
+            // Register, then drop straight into login with the new e-mail prefilled.
+            if (RunRegisterDialog(welcome) is { } email && RunLoginDialog(welcome, email))
                 welcome.DialogResult = true;
         };
 
@@ -95,15 +95,15 @@ public partial class App : Application
 
     /// <summary>
     /// Show the login dialog owned by <paramref name="owner"/> (null for a standalone window).
-    /// Keeps the login↔register cross-link working and optionally prefills a username. Returns
+    /// Keeps the login↔register cross-link working and optionally prefills an e-mail. Returns
     /// <c>true</c> once the user has signed in.
     /// </summary>
-    private bool RunLoginDialog(Window? owner, string? prefillUsername = null)
+    private bool RunLoginDialog(Window? owner, string? prefillEmail = null)
     {
         var login = _services.GetRequiredService<LoginView>();
         login.Owner = owner;
-        if (prefillUsername is not null)
-            login.NotifyRegistered(prefillUsername);
+        if (prefillEmail is not null)
+            login.NotifyRegistered(prefillEmail);
 
         login.RegisterRequested += OnRegisterFromLogin;
         var signedIn = login.ShowDialog() == true;
@@ -113,21 +113,21 @@ public partial class App : Application
 
     /// <summary>
     /// Open the registration dialog on top of the (still-open) login dialog. On success, return to
-    /// login with the new username prefilled so the user can sign in.
+    /// login with the new e-mail prefilled so the user can sign in.
     /// </summary>
     private void OnRegisterFromLogin(object? sender, EventArgs e)
     {
         var login = (LoginView)sender!;
-        if (RunRegisterDialog(login) is { } username)
-            login.NotifyRegistered(username);
+        if (RunRegisterDialog(login) is { } email)
+            login.NotifyRegistered(email);
     }
 
-    /// <summary>Show the registration dialog; returns the new username, or null if cancelled.</summary>
+    /// <summary>Show the registration dialog; returns the new e-mail, or null if cancelled.</summary>
     private string? RunRegisterDialog(Window owner)
     {
         var register = _services.GetRequiredService<RegisterView>();
         register.Owner = owner;
-        return register.ShowDialog() == true ? register.RegisteredUsername : null;
+        return register.ShowDialog() == true ? register.RegisteredEmail : null;
     }
 
     private void OpenMainWindow()

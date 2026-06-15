@@ -17,7 +17,7 @@ public static class DatabaseBootstrapper
 {
     // Default administrator seeded only into an empty users table. MUST be changed after the first
     // sign-in; it exists so a fresh database isn't locked out of its own admin area.
-    private const string DefaultAdminUsername = "admin";
+    private const string DefaultAdminEmail = "admin@stockfront.local";
     private const string DefaultAdminPassword = "admin123";
     private const string DefaultAdminDisplayName = "Администратор";
 
@@ -43,11 +43,11 @@ public static class DatabaseBootstrapper
 
         var auth = services.GetRequiredService<IAuthService>();
         var result = await auth.RegisterAsync(
-            DefaultAdminUsername, DefaultAdminPassword, DefaultAdminDisplayName,
+            DefaultAdminEmail, DefaultAdminPassword, DefaultAdminDisplayName,
             role: UserRole.Admin, ct: ct);
 
         if (result.Succeeded)
-            Debug.WriteLine($"Seeded default admin '{DefaultAdminUsername}' — change this password.");
+            Debug.WriteLine($"Seeded default admin '{DefaultAdminEmail}' — change this password.");
         else
             throw new InvalidOperationException($"Failed to seed default admin: {result.Error}");
     }

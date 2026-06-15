@@ -10,11 +10,8 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
     {
         b.HasKey(x => x.Id);
 
-        b.Property(x => x.Username)
-         .IsRequired()
-         .HasMaxLength(64);
-
         b.Property(x => x.Email)
+         .IsRequired()
          .HasMaxLength(256);
 
         b.Property(x => x.PasswordHash)
@@ -40,8 +37,7 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
         b.Property(x => x.LastLoginAt)
          .HasColumnType("datetime(6)");
 
-        // Login must be unique; e-mail must be unique when present (MySQL allows many NULLs).
-        b.HasIndex(x => x.Username).IsUnique();
+        // E-mail is the login, so it must be unique across all accounts.
         b.HasIndex(x => x.Email).IsUnique();
     }
 }

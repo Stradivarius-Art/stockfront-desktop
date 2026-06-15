@@ -23,11 +23,11 @@ public partial class LoginView : Window
 
         _viewModel.LoginSucceeded += OnLoginSucceeded;
         _viewModel.RegisterRequested += OnRegisterRequested;
-        Loaded += (_, _) => UsernameBox.Focus();
+        Loaded += (_, _) => EmailBox.Focus();
     }
 
-    /// <summary>Prefill the login after a successful registration (called by the host).</summary>
-    public void NotifyRegistered(string username) => _viewModel.NotifyRegistered(username);
+    /// <summary>Prefill the e-mail after a successful registration (called by the host).</summary>
+    public void NotifyRegistered(string email) => _viewModel.NotifyRegistered(email);
 
     private void OnLoginSucceeded()
     {

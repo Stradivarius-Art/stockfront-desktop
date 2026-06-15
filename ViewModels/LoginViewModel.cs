@@ -23,7 +23,7 @@ public sealed partial class LoginViewModel : ObservableObject
     public event Action? RegisterRequested;
 
     [ObservableProperty]
-    private string _username = string.Empty;
+    private string _email = string.Empty;
 
     private string _password = string.Empty;
 
@@ -48,12 +48,12 @@ public sealed partial class LoginViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(LoginCommand))]
     private bool _isBusy;
 
-    /// <summary>Prefill the login after a successful registration and invite the user to sign in.</summary>
-    public void NotifyRegistered(string username)
+    /// <summary>Prefill the e-mail after a successful registration and invite the user to sign in.</summary>
+    public void NotifyRegistered(string email)
     {
-        Username = username;
+        Email = email;
         ErrorMessage = null;
-        InfoMessage = "Регистрация успешна. Войдите под новым логином.";
+        InfoMessage = "Регистрация успешна. Войдите под новым e-mail.";
     }
 
     // The button stays enabled even with empty fields (we don't lock the user out before they type);
@@ -67,16 +67,16 @@ public sealed partial class LoginViewModel : ObservableObject
         ErrorMessage = null;
         InfoMessage = null;
 
-        if (string.IsNullOrWhiteSpace(Username) || _password.Length == 0)
+        if (string.IsNullOrWhiteSpace(Email) || _password.Length == 0)
         {
-            ErrorMessage = "Введите логин и пароль.";
+            ErrorMessage = "Введите e-mail и пароль.";
             return;
         }
 
         IsBusy = true;
         try
         {
-            var result = await _auth.LoginAsync(Username, _password);
+            var result = await _auth.LoginAsync(Email, _password);
             if (result.Succeeded)
             {
                 LoginSucceeded?.Invoke();

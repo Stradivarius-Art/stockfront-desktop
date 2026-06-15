@@ -6,15 +6,15 @@ namespace stockfront.Views;
 
 /// <summary>
 /// The registration window. Code-behind only bridges the two <see cref="PasswordBox"/>es to the
-/// ViewModel and closes the dialog on success or cancel. <see cref="RegisteredUsername"/> lets the
+/// ViewModel and closes the dialog on success or cancel. <see cref="RegisteredEmail"/> lets the
 /// host prefill the login afterwards.
 /// </summary>
 public partial class RegisterView : Window
 {
     private readonly RegisterViewModel _viewModel;
 
-    /// <summary>The login created on success, or <c>null</c> if the user cancelled.</summary>
-    public string? RegisteredUsername { get; private set; }
+    /// <summary>The e-mail created on success, or <c>null</c> if the user cancelled.</summary>
+    public string? RegisteredEmail { get; private set; }
 
     public RegisterView(RegisterViewModel viewModel)
     {
@@ -24,12 +24,12 @@ public partial class RegisterView : Window
 
         _viewModel.Registered += OnRegistered;
         _viewModel.BackRequested += OnBackRequested;
-        Loaded += (_, _) => UsernameBox.Focus();
+        Loaded += (_, _) => DisplayNameBox.Focus();
     }
 
-    private void OnRegistered(string username)
+    private void OnRegistered(string email)
     {
-        RegisteredUsername = username;
+        RegisteredEmail = email;
         DialogResult = true;
         Close();
     }

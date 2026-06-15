@@ -7,8 +7,7 @@ namespace StockFront.Contracts.Persistence;
 /// never plaintext); hashing happens in the auth layer before this reaches the repository.
 /// </summary>
 public sealed record NewUser(
-    string Username,
-    string? Email,
+    string Email,
     string DisplayName,
     string PasswordHash,
     UserRole Role);

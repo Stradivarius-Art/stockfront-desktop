@@ -47,25 +47,15 @@
             <!-- Display name -->
             <TextBlock Text="Имя" Style="{StaticResource FieldLabel}" />
             <Border Style="{StaticResource InputBorder}">
-                <TextBox Height="42" Padding="14,0" VerticalContentAlignment="Center" FontSize="14"
-                         BorderThickness="0" Background="Transparent"
+                <TextBox x:Name="DisplayNameBox" Height="42" Padding="14,0" VerticalContentAlignment="Center"
+                         FontSize="14" BorderThickness="0" Background="Transparent"
                          Text="{Binding DisplayName, UpdateSourceTrigger=PropertyChanged}" />
             </Border>
             <TextBlock Text="{Binding DisplayNameError}" Style="{StaticResource ErrorText}"
                        Visibility="{Binding DisplayNameError, Converter={StaticResource NullToCollapsedConverter}}" />
 
-            <!-- Username -->
-            <TextBlock Text="Логин" Style="{StaticResource FieldLabel}" />
-            <Border Style="{StaticResource InputBorder}">
-                <TextBox x:Name="UsernameBox" Height="42" Padding="14,0" VerticalContentAlignment="Center"
-                         FontSize="14" BorderThickness="0" Background="Transparent"
-                         Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" />
-            </Border>
-            <TextBlock Text="{Binding UsernameError}" Style="{StaticResource ErrorText}"
-                       Visibility="{Binding UsernameError, Converter={StaticResource NullToCollapsedConverter}}" />
-
-            <!-- Email (optional) -->
-            <TextBlock Text="E-mail (необязательно)" Style="{StaticResource FieldLabel}" />
+            <!-- Email (used as the login) -->
+            <TextBlock Text="E-mail" Style="{StaticResource FieldLabel}" />
             <Border Style="{StaticResource InputBorder}">
                 <TextBox Height="42" Padding="14,0" VerticalContentAlignment="Center" FontSize="14"
                          BorderThickness="0" Background="Transparent"

@@ -14,19 +14,16 @@ public sealed class UserRepository : IUserRepository
 
     public UserRepository(AppDbContext db) => _db = db;
 
-    public async Task<UserAccount?> FindByUsernameAsync(string username, CancellationToken ct = default)
+    public async Task<UserAccount?> FindByEmailAsync(string email, CancellationToken ct = default)
     {
         var u = await _db.Users
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Username == username, ct);
+            .FirstOrDefaultAsync(x => x.Email == email, ct);
 
         return u is null
             ? null
-            : new UserAccount(u.Id, u.Username, u.DisplayName, u.PasswordHash, u.Role, u.IsActive);
+            : new UserAccount(u.Id, u.Email, u.DisplayName, u.PasswordHash, u.Role, u.IsActive);
     }
-
-    public Task<bool> UsernameExistsAsync(string username, CancellationToken ct = default) =>
-        _db.Users.AsNoTracking().AnyAsync(x => x.Username == username, ct);
 
     public Task<bool> EmailExistsAsync(string email, CancellationToken ct = default) =>
         _db.Users.AsNoTracking().AnyAsync(x => x.Email == email, ct);
@@ -35,7 +32,6 @@ public sealed class UserRepository : IUserRepository
     {
         var entity = new User
         {
-            Username = user.Username,
             Email = user.Email,
             DisplayName = user.DisplayName,
             PasswordHash = user.PasswordHash,

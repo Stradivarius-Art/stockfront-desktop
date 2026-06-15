@@ -15,7 +15,7 @@ public sealed partial class RegisterViewModel : ObservableObject
 
     public RegisterViewModel(IAuthService auth) => _auth = auth;
 
-    /// <summary>Raised on success with the new login, so the host can return to the login screen.</summary>
+    /// <summary>Raised on success with the new e-mail, so the host can return to the login screen.</summary>
     public event Action<string>? Registered;
 
     /// <summary>Raised when the user cancels and wants to go back to login.</summary>
@@ -23,7 +23,6 @@ public sealed partial class RegisterViewModel : ObservableObject
 
     // --- Bound text fields (validated live via the generated On<Field>Changed hooks) ---
 
-    [ObservableProperty] private string _username = string.Empty;
     [ObservableProperty] private string _email = string.Empty;
     [ObservableProperty] private string _displayName = string.Empty;
 
@@ -45,7 +44,6 @@ public sealed partial class RegisterViewModel : ObservableObject
 
     // --- Per-field error messages (null = valid) ---
 
-    [ObservableProperty] private string? _usernameError;
     [ObservableProperty] private string? _emailError;
     [ObservableProperty] private string? _displayNameError;
     [ObservableProperty] private string? _passwordError;
@@ -56,7 +54,6 @@ public sealed partial class RegisterViewModel : ObservableObject
 
     [ObservableProperty] private bool _isBusy;
 
-    partial void OnUsernameChanged(string value) => UsernameError = CredentialRules.ValidateUsername(value);
     partial void OnEmailChanged(string value) => EmailError = CredentialRules.ValidateEmail(value);
     partial void OnDisplayNameChanged(string value) => DisplayNameError = CredentialRules.ValidateDisplayName(value);
 
@@ -65,13 +62,12 @@ public sealed partial class RegisterViewModel : ObservableObject
 
     private bool Validate()
     {
-        UsernameError = CredentialRules.ValidateUsername(Username);
         EmailError = CredentialRules.ValidateEmail(Email);
         DisplayNameError = CredentialRules.ValidateDisplayName(DisplayName);
         PasswordError = CredentialRules.ValidatePassword(_password);
         ConfirmPasswordError = CredentialRules.ValidatePasswordConfirmation(_password, _confirmPassword);
 
-        return UsernameError is null && EmailError is null && DisplayNameError is null
+        return EmailError is null && DisplayNameError is null
                && PasswordError is null && ConfirmPasswordError is null;
     }
 
@@ -85,17 +81,15 @@ public sealed partial class RegisterViewModel : ObservableObject
         IsBusy = true;
         try
         {
-            var result = await _auth.RegisterAsync(Username, _password, DisplayName, Email);
+            var result = await _auth.RegisterAsync(Email, _password, DisplayName);
             if (result.Succeeded)
             {
-                Registered?.Invoke(result.User!.Username);
+                Registered?.Invoke(result.User!.Email);
                 return;
             }
 
-            // Map the server-side uniqueness errors back onto the relevant field.
-            if (result.Error?.Contains("Логин", StringComparison.OrdinalIgnoreCase) == true)
-                UsernameError = result.Error;
-            else if (result.Error?.Contains("mail", StringComparison.OrdinalIgnoreCase) == true)
+            // Map the server-side uniqueness error back onto the relevant field.
+            if (result.Error?.Contains("mail", StringComparison.OrdinalIgnoreCase) == true)
                 EmailError = result.Error;
             else
                 FormError = result.Error;

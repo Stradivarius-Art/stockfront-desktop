@@ -7,13 +7,10 @@ namespace StockFront.Contracts.Persistence;
 /// </summary>
 public interface IUserRepository
 {
-    /// <summary>Find an account by login. Returns <c>null</c> if there is none.</summary>
-    Task<UserAccount?> FindByUsernameAsync(string username, CancellationToken ct = default);
+    /// <summary>Find an account by login e-mail. Returns <c>null</c> if there is none.</summary>
+    Task<UserAccount?> FindByEmailAsync(string email, CancellationToken ct = default);
 
-    /// <summary>True if a login is already taken (case-insensitive at the database collation).</summary>
-    Task<bool> UsernameExistsAsync(string username, CancellationToken ct = default);
-
-    /// <summary>True if a non-null e-mail is already taken.</summary>
+    /// <summary>True if an e-mail is already taken (case-insensitive at the database collation).</summary>
     Task<bool> EmailExistsAsync(string email, CancellationToken ct = default);
 
     /// <summary>Insert a new account and return its generated id.</summary>

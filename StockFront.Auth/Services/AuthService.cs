@@ -9,9 +9,9 @@ namespace StockFront.Auth.Services;
 /// </summary>
 public sealed class AuthService : IAuthService
 {
-    // One generic message for every failure mode, so we never reveal whether the username exists
+    // One generic message for every failure mode, so we never reveal whether the e-mail exists
     // or the account is disabled.
-    private const string InvalidCredentials = "Неверный логин или пароль.";
+    private const string InvalidCredentials = "Неверный e-mail или пароль.";
 
     private readonly IUserRepository _users;
     private readonly IPasswordHasher _hasher;
@@ -24,12 +24,12 @@ public sealed class AuthService : IAuthService
         _session = session;
     }
 
-    public async Task<AuthResult> LoginAsync(string username, string password, CancellationToken ct = default)
+    public async Task<AuthResult> LoginAsync(string email, string password, CancellationToken ct = default)
     {
-        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrEmpty(password))
+        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrEmpty(password))
             return AuthResult.Fail(InvalidCredentials);
 
-        var account = await _users.FindByUsernameAsync(username.Trim(), ct);
+        var account = await _users.FindByEmailAsync(email.Trim(), ct);
 
         // Verify even when the account is missing/inactive would let us short-circuit, but we still
         // run a hash check against a dummy value to keep timing roughly constant and not leak
@@ -40,7 +40,7 @@ public sealed class AuthService : IAuthService
         if (account is null || !account.IsActive || !passwordOk)
             return AuthResult.Fail(InvalidCredentials);
 
-        var identity = new UserIdentity(account.Id, account.Username, account.DisplayName, account.Role);
+        var identity = new UserIdentity(account.Id, account.Email, account.DisplayName, account.Role);
         _session.SignIn(identity);
         await _users.UpdateLastLoginAsync(account.Id, DateTime.UtcNow, ct);
 
@@ -48,38 +48,33 @@ public sealed class AuthService : IAuthService
     }
 
     public async Task<AuthResult> RegisterAsync(
-        string username,
+        string email,
         string password,
         string displayName,
-        string? email = null,
         UserRole role = UserRole.Customer,
         CancellationToken ct = default)
     {
         // Same rules the UI shows — enforced here too, so they hold when the UI is bypassed.
-        var error = CredentialRules.ValidateUsername(username)
+        var error = CredentialRules.ValidateEmail(email)
                     ?? CredentialRules.ValidatePassword(password)
-                    ?? CredentialRules.ValidateDisplayName(displayName)
-                    ?? CredentialRules.ValidateEmail(email);
+                    ?? CredentialRules.ValidateDisplayName(displayName);
         if (error is not null)
             return AuthResult.Fail(error);
 
-        username = username.Trim();
-        email = string.IsNullOrWhiteSpace(email) ? null : email.Trim();
+        email = email.Trim();
 
-        if (await _users.UsernameExistsAsync(username, ct))
-            return AuthResult.Fail("Логин уже занят.");
-        if (email is not null && await _users.EmailExistsAsync(email, ct))
+        if (await _users.EmailExistsAsync(email, ct))
             return AuthResult.Fail("E-mail уже используется.");
 
-        var newUser = new NewUser(username, email, displayName.Trim(), _hasher.Hash(password), role);
+        var newUser = new NewUser(email, displayName.Trim(), _hasher.Hash(password), role);
         var id = await _users.CreateAsync(newUser, ct);
 
-        return AuthResult.Success(new UserIdentity(id, username, displayName.Trim(), role));
+        return AuthResult.Success(new UserIdentity(id, email, displayName.Trim(), role));
     }
 
     public void Logout() => _session.SignOut();
 
     // A fixed valid BCrypt hash (of a random string) used only to spend time verifying when the
-    // account doesn't exist, so failed logins for real and unknown usernames take similar time.
+    // account doesn't exist, so failed logins for real and unknown e-mails take similar time.
     private const string DummyHash = "$2a$12$C6UzMDM.H6dfI/f/IKcEeO.7Z3Q3p3VvJ8m6m3Yk5o9oQpQ4q3qK";
 }

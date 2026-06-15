@@ -3,7 +3,7 @@ using StockFront.Contracts.Auth;
 namespace StockFront.Data.Entities;
 
 /// <summary>
-/// An account that can sign in to the application. The login is <see cref="Username"/>;
+/// An account that can sign in to the application. The login is <see cref="Email"/>;
 /// the password is never stored in clear text — only its hash. The role decides which
 /// part of the system the user lands in (see <see cref="UserRole"/>).
 /// </summary>
@@ -11,11 +11,8 @@ public sealed class User
 {
     public int Id { get; set; }
 
-    /// <summary>Login name. Unique across all accounts (enforced by the database).</summary>
-    public string Username { get; set; } = null!;
-
-    /// <summary>Optional contact e-mail. Unique when present.</summary>
-    public string? Email { get; set; }
+    /// <summary>Login e-mail. Unique across all accounts (enforced by the database).</summary>
+    public string Email { get; set; } = null!;
 
     /// <summary>
     /// Password verifier. Holds the algorithm, salt and hash together (a BCrypt string) — never
