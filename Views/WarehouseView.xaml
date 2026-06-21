@@ -10,36 +10,60 @@
              FontFamily="Segoe UI">
 
     <UserControl.Resources>
-        <Style x:Key="ColHeader" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}" />
-            <Setter Property="FontSize" Value="13" />
+        <Style x:Key="ColHeader"
+               TargetType="TextBlock">
+            <Setter Property="Foreground"
+                    Value="{StaticResource SecondaryTextBrush}"/>
+            <Setter Property="FontSize"
+                    Value="13"/>
         </Style>
-        <Style x:Key="Cell" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Foreground" Value="{StaticResource HeadingBrush}" />
+        <Style x:Key="Cell"
+               TargetType="TextBlock">
+            <Setter Property="FontSize"
+                    Value="14"/>
+            <Setter Property="VerticalAlignment"
+                    Value="Center"/>
+            <Setter Property="Foreground"
+                    Value="{StaticResource HeadingBrush}"/>
         </Style>
 
         <!-- Orange filled action button -->
-        <Style x:Key="PrimaryButton" TargetType="Button">
-            <Setter Property="Height" Value="44" />
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="BorderThickness" Value="0" />
+        <Style x:Key="PrimaryButton"
+               TargetType="Button">
+            <Setter Property="Height"
+                    Value="44"/>
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+            <Setter Property="Foreground"
+                    Value="White"/>
+            <Setter Property="FontSize"
+                    Value="14"/>
+            <Setter Property="FontWeight"
+                    Value="SemiBold"/>
+            <Setter Property="BorderThickness"
+                    Value="0"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="Bg" CornerRadius="12" Padding="22,0" Background="{StaticResource AccentBrush}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Border x:Name="Bg"
+                                CornerRadius="12"
+                                Padding="22,0"
+                                Background="{StaticResource AccentBrush}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bg" Property="Background" Value="{StaticResource AccentHoverBrush}" />
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+                                <Setter TargetName="Bg"
+                                        Property="Background"
+                                        Value="{StaticResource AccentHoverBrush}"/>
                             </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="Bg" Property="Opacity" Value="0.5" />
+                            <Trigger Property="IsEnabled"
+                                     Value="False">
+                                <Setter TargetName="Bg"
+                                        Property="Opacity"
+                                        Value="0.5"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -48,26 +72,44 @@
         </Style>
 
         <!-- Outline (secondary) button -->
-        <Style x:Key="SecondaryButton" TargetType="Button">
-            <Setter Property="Height" Value="44" />
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="Foreground" Value="{StaticResource HeadingBrush}" />
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="BorderThickness" Value="0" />
+        <Style x:Key="SecondaryButton"
+               TargetType="Button">
+            <Setter Property="Height"
+                    Value="44"/>
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+            <Setter Property="Foreground"
+                    Value="{StaticResource HeadingBrush}"/>
+            <Setter Property="FontSize"
+                    Value="14"/>
+            <Setter Property="FontWeight"
+                    Value="SemiBold"/>
+            <Setter Property="BorderThickness"
+                    Value="0"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="Bg" CornerRadius="12" Padding="22,0" Background="White"
-                                BorderBrush="{StaticResource DividerBrush}" BorderThickness="1">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <Border x:Name="Bg"
+                                CornerRadius="12"
+                                Padding="22,0"
+                                Background="White"
+                                BorderBrush="{StaticResource DividerBrush}"
+                                BorderThickness="1">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bg" Property="Background" Value="{StaticResource WorkAreaBrush}" />
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+                                <Setter TargetName="Bg"
+                                        Property="Background"
+                                        Value="{StaticResource WorkAreaBrush}"/>
                             </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="Bg" Property="Opacity" Value="0.5" />
+                            <Trigger Property="IsEnabled"
+                                     Value="False">
+                                <Setter TargetName="Bg"
+                                        Property="Opacity"
+                                        Value="0.5"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -76,26 +118,47 @@
         </Style>
 
         <!-- Filter chip -->
-        <Style x:Key="FilterChip" TargetType="RadioButton">
-            <Setter Property="Margin" Value="0,0,8,0" />
-            <Setter Property="Cursor" Value="Hand" />
+        <Style x:Key="FilterChip"
+               TargetType="RadioButton">
+            <Setter Property="Margin"
+                    Value="0,0,8,0"/>
+            <Setter Property="Cursor"
+                    Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RadioButton">
-                        <Border x:Name="Bg" CornerRadius="16" Padding="16,7" Background="White"
-                                BorderBrush="{StaticResource DividerBrush}" BorderThickness="1">
-                            <TextBlock x:Name="Txt" Text="{TemplateBinding Content}" FontSize="13"
-                                       Foreground="{StaticResource SecondaryTextBrush}" />
+                        <Border x:Name="Bg"
+                                CornerRadius="16"
+                                Padding="16,7"
+                                Background="White"
+                                BorderBrush="{StaticResource DividerBrush}"
+                                BorderThickness="1">
+                            <TextBlock x:Name="Txt"
+                                       Text="{TemplateBinding Content}"
+                                       FontSize="13"
+                                       Foreground="{StaticResource SecondaryTextBrush}"/>
                         </Border>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bg" Property="Background" Value="{StaticResource WorkAreaBrush}" />
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+                                <Setter TargetName="Bg"
+                                        Property="Background"
+                                        Value="{StaticResource WorkAreaBrush}"/>
                             </Trigger>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="Bg" Property="Background" Value="{StaticResource ActiveNavBrush}" />
-                                <Setter TargetName="Bg" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
-                                <Setter TargetName="Txt" Property="Foreground" Value="{StaticResource AccentBrush}" />
-                                <Setter TargetName="Txt" Property="FontWeight" Value="SemiBold" />
+                            <Trigger Property="IsChecked"
+                                     Value="True">
+                                <Setter TargetName="Bg"
+                                        Property="Background"
+                                        Value="{StaticResource ActiveNavBrush}"/>
+                                <Setter TargetName="Bg"
+                                        Property="BorderBrush"
+                                        Value="{StaticResource AccentBrush}"/>
+                                <Setter TargetName="Txt"
+                                        Property="Foreground"
+                                        Value="{StaticResource AccentBrush}"/>
+                                <Setter TargetName="Txt"
+                                        Property="FontWeight"
+                                        Value="SemiBold"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -104,66 +167,89 @@
         </Style>
 
         <!-- Form field label -->
-        <Style x:Key="FieldLabel" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}" />
-            <Setter Property="FontSize" Value="13" />
-            <Setter Property="Margin" Value="0,12,0,5" />
+        <Style x:Key="FieldLabel"
+               TargetType="TextBlock">
+            <Setter Property="Foreground"
+                    Value="{StaticResource SecondaryTextBrush}"/>
+            <Setter Property="FontSize"
+                    Value="13"/>
+            <Setter Property="Margin"
+                    Value="0,12,0,5"/>
         </Style>
 
         <!-- Rounded text input -->
-        <Style x:Key="InputBox" TargetType="TextBox">
-            <Setter Property="Height" Value="38" />
-            <Setter Property="Padding" Value="10,0" />
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="Background" Value="White" />
-            <Setter Property="BorderBrush" Value="{StaticResource DividerBrush}" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Style x:Key="InputBox"
+               TargetType="TextBox">
+            <Setter Property="Height"
+                    Value="38"/>
+            <Setter Property="Padding"
+                    Value="10,0"/>
+            <Setter Property="FontSize"
+                    Value="14"/>
+            <Setter Property="Background"
+                    Value="White"/>
+            <Setter Property="BorderBrush"
+                    Value="{StaticResource DividerBrush}"/>
+            <Setter Property="BorderThickness"
+                    Value="1"/>
+            <Setter Property="VerticalContentAlignment"
+                    Value="Center"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
-                        <Border CornerRadius="10" Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-                            <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}"
-                                          VerticalAlignment="Center" />
+                        <Border CornerRadius="10"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          Margin="{TemplateBinding Padding}"
+                                          VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
 
-        <!-- Item templates: also used for the closed selection box, so the name/label renders
-             instead of the object's ToString() under the custom ComboBox template. -->
-        <DataTemplate x:Key="ComboItemName">
-            <TextBlock Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
-        </DataTemplate>
-        <DataTemplate x:Key="ComboItemLabel">
-            <TextBlock Text="{Binding Label}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
-        </DataTemplate>
-
         <!-- Rounded dropdown item — matches the rest of the rounded UI -->
-        <Style x:Key="RoundedComboItem" TargetType="ComboBoxItem">
-            <Setter Property="Padding" Value="12,8" />
-            <Setter Property="Margin" Value="4,2" />
-            <Setter Property="Foreground" Value="{StaticResource HeadingBrush}" />
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Style x:Key="RoundedComboItem"
+               TargetType="ComboBoxItem">
+            <Setter Property="Padding"
+                    Value="12,8"/>
+            <Setter Property="Margin"
+                    Value="4,2"/>
+            <Setter Property="Foreground"
+                    Value="{StaticResource HeadingBrush}"/>
+            <Setter Property="FontSize"
+                    Value="14"/>
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+            <Setter Property="SnapsToDevicePixels"
+                    Value="True"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ComboBoxItem">
-                        <Border x:Name="Bd" CornerRadius="8" Background="Transparent"
+                        <Border x:Name="Bd"
+                                CornerRadius="8"
+                                Background="Transparent"
                                 Padding="{TemplateBinding Padding}">
-                            <ContentPresenter VerticalAlignment="Center" />
+                            <ContentPresenter VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsHighlighted" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource WorkAreaBrush}" />
+                            <Trigger Property="IsHighlighted"
+                                     Value="True">
+                                <Setter TargetName="Bd"
+                                        Property="Background"
+                                        Value="{StaticResource WorkAreaBrush}"/>
                             </Trigger>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource ActiveNavBrush}" />
-                                <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
-                                <Setter Property="FontWeight" Value="SemiBold" />
+                            <Trigger Property="IsSelected"
+                                     Value="True">
+                                <Setter TargetName="Bd"
+                                        Property="Background"
+                                        Value="{StaticResource ActiveNavBrush}"/>
+                                <Setter Property="Foreground"
+                                        Value="{StaticResource AccentBrush}"/>
+                                <Setter Property="FontWeight"
+                                        Value="SemiBold"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -172,68 +258,106 @@
         </Style>
 
         <!-- Rounded combo box (closed control + popup), to match InputBox -->
-        <Style x:Key="InputCombo" TargetType="ComboBox">
-            <Setter Property="Height" Value="38" />
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="Foreground" Value="{StaticResource HeadingBrush}" />
-            <Setter Property="Background" Value="White" />
-            <Setter Property="BorderBrush" Value="{StaticResource DividerBrush}" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="Padding" Value="12,0" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="ItemContainerStyle" Value="{StaticResource RoundedComboItem}" />
+        <Style x:Key="InputCombo"
+               TargetType="ComboBox">
+            <Setter Property="Height"
+                    Value="38"/>
+            <Setter Property="FontSize"
+                    Value="14"/>
+            <Setter Property="Foreground"
+                    Value="{StaticResource HeadingBrush}"/>
+            <Setter Property="Background"
+                    Value="White"/>
+            <Setter Property="BorderBrush"
+                    Value="{StaticResource DividerBrush}"/>
+            <Setter Property="BorderThickness"
+                    Value="1"/>
+            <Setter Property="Padding"
+                    Value="12,0"/>
+            <Setter Property="VerticalContentAlignment"
+                    Value="Center"/>
+            <Setter Property="ItemContainerStyle"
+                    Value="{StaticResource RoundedComboItem}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ComboBox">
                         <Grid>
-                            <ToggleButton x:Name="Toggle" Focusable="False" ClickMode="Press"
+                            <ToggleButton x:Name="Toggle"
+                                          Focusable="False"
+                                          ClickMode="Press"
                                           IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
                                 <ToggleButton.Template>
                                     <ControlTemplate TargetType="ToggleButton">
-                                        <Border x:Name="Bd" CornerRadius="10"
+                                        <Border x:Name="Bd"
+                                                CornerRadius="10"
                                                 Background="{TemplateBinding Background}"
-                                                BorderBrush="{StaticResource DividerBrush}" BorderThickness="1">
-                                            <iconPacks:PackIconMaterial Kind="ChevronDown" Width="14" Height="14"
-                                                                        HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                BorderBrush="{StaticResource DividerBrush}"
+                                                BorderThickness="1">
+                                            <iconPacks:PackIconMaterial Kind="ChevronDown"
+                                                                        Width="14"
+                                                                        Height="14"
+                                                                        HorizontalAlignment="Right"
+                                                                        VerticalAlignment="Center"
                                                                         Margin="0,0,12,0"
-                                                                        Foreground="{StaticResource SecondaryTextBrush}" />
+                                                                        Foreground="{StaticResource SecondaryTextBrush}"/>
                                         </Border>
                                         <ControlTemplate.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                            <Trigger Property="IsMouseOver"
+                                                     Value="True">
+                                                <Setter TargetName="Bd"
+                                                        Property="BorderBrush"
+                                                        Value="{StaticResource AccentBrush}"/>
                                             </Trigger>
-                                            <Trigger Property="IsChecked" Value="True">
-                                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                            <Trigger Property="IsChecked"
+                                                     Value="True">
+                                                <Setter TargetName="Bd"
+                                                        Property="BorderBrush"
+                                                        Value="{StaticResource AccentBrush}"/>
                                             </Trigger>
                                         </ControlTemplate.Triggers>
                                     </ControlTemplate>
                                 </ToggleButton.Template>
                             </ToggleButton>
 
-                            <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False"
+                            <ContentPresenter x:Name="ContentSite"
+                                              IsHitTestVisible="False"
                                               Content="{TemplateBinding SelectionBoxItem}"
                                               ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
                                               ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
-                                              Margin="12,0,34,0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                                              Margin="12,0,34,0"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Left"/>
 
-                            <Popup x:Name="PART_Popup" Placement="Bottom" AllowsTransparency="True" Focusable="False"
-                                   IsOpen="{TemplateBinding IsDropDownOpen}" PopupAnimation="Slide">
-                                <Border CornerRadius="10" Background="White" Margin="0,4,0,6"
-                                        BorderBrush="{StaticResource DividerBrush}" BorderThickness="1"
+                            <Popup x:Name="PART_Popup"
+                                   Placement="Bottom"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   PopupAnimation="Slide">
+                                <Border CornerRadius="10"
+                                        Background="White"
+                                        Margin="0,4,0,6"
+                                        BorderBrush="{StaticResource DividerBrush}"
+                                        BorderThickness="1"
                                         MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
                                         MaxHeight="{TemplateBinding MaxDropDownHeight}">
                                     <Border.Effect>
-                                        <DropShadowEffect Color="#33000000" BlurRadius="14" ShadowDepth="2" Direction="270" />
+                                        <DropShadowEffect Color="#33000000"
+                                                          BlurRadius="14"
+                                                          ShadowDepth="2"
+                                                          Direction="270"/>
                                     </Border.Effect>
                                     <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                        <ItemsPresenter Margin="0,4" />
+                                        <ItemsPresenter Margin="0,4"/>
                                     </ScrollViewer>
                                 </Border>
                             </Popup>
                         </Grid>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Opacity" Value="0.5" />
+                            <Trigger Property="IsEnabled"
+                                     Value="False">
+                                <Setter Property="Opacity"
+                                        Value="0.5"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -246,45 +370,66 @@
     <Grid>
         <Grid Margin="32,28">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
             <!-- Heading + actions -->
-            <Grid Grid.Row="0" Margin="0,0,0,20">
-                <TextBlock Text="Склад" FontSize="26" FontWeight="Bold"
-                           Foreground="{StaticResource HeadingBrush}" VerticalAlignment="Center" />
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <Button Content="Списание" Style="{StaticResource SecondaryButton}" MinWidth="130"
-                            Command="{Binding OpenWriteOffCommand}" Margin="0,0,12,0" />
-                    <Button Style="{StaticResource PrimaryButton}" MinWidth="150" Command="{Binding OpenReceiveCommand}">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <iconPacks:PackIconMaterial Kind="Plus" Width="16" Height="16" VerticalAlignment="Center" />
-                            <TextBlock Text="Приёмка" Margin="10,0,0,0" VerticalAlignment="Center" />
+            <Grid Grid.Row="0"
+                  Margin="0,0,0,20">
+                <TextBlock Text="Склад"
+                           FontSize="26"
+                           FontWeight="Bold"
+                           Foreground="{StaticResource HeadingBrush}"
+                           VerticalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center">
+                    <Button Content="Списание"
+                            Style="{StaticResource SecondaryButton}"
+                            MinWidth="130"
+                            Command="{Binding OpenWriteOffCommand}"
+                            Margin="0,0,12,0"/>
+                    <Button Style="{StaticResource PrimaryButton}"
+                            MinWidth="150"
+                            Command="{Binding OpenReceiveCommand}">
+                        <StackPanel Orientation="Horizontal"
+                                    VerticalAlignment="Center">
+                            <iconPacks:PackIconMaterial Kind="Plus"
+                                                        Width="16"
+                                                        Height="16"
+                                                        VerticalAlignment="Center"/>
+                            <TextBlock Text="Приёмка"
+                                       Margin="10,0,0,0"
+                                       VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>
             </Grid>
 
             <!-- Filters + search -->
-            <Grid Grid.Row="1" Margin="0,0,0,16">
-                <ItemsControl ItemsSource="{Binding Filters}" HorizontalAlignment="Left">
+            <Grid Grid.Row="1"
+                  Margin="0,0,0,16">
+                <ItemsControl ItemsSource="{Binding Filters}"
+                              HorizontalAlignment="Left">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <WrapPanel />
+                            <WrapPanel/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <RadioButton Style="{StaticResource FilterChip}" Content="{Binding}"
+                            <RadioButton Style="{StaticResource FilterChip}"
+                                         Content="{Binding}"
                                          Command="{Binding DataContext.SetFilterCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                          CommandParameter="{Binding}">
                                 <RadioButton.IsChecked>
-                                    <MultiBinding Converter="{StaticResource EqualityConverter}" Mode="OneWay">
-                                        <Binding />
+                                    <MultiBinding Converter="{StaticResource EqualityConverter}"
+                                                  Mode="OneWay">
+                                        <Binding/>
                                         <Binding Path="DataContext.ActiveFilter"
-                                                 RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
+                                                 RelativeSource="{RelativeSource AncestorType=ItemsControl}"/>
                                     </MultiBinding>
                                 </RadioButton.IsChecked>
                             </RadioButton>
@@ -292,99 +437,157 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
-                <Border HorizontalAlignment="Right" Background="White" CornerRadius="18" Width="240" Height="38"
-                        BorderBrush="{StaticResource DividerBrush}" BorderThickness="1">
+                <Border HorizontalAlignment="Right"
+                        Background="White"
+                        CornerRadius="18"
+                        Width="240"
+                        Height="38"
+                        BorderBrush="{StaticResource DividerBrush}"
+                        BorderThickness="1">
                     <Grid Margin="14,0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <iconPacks:PackIconMaterial Grid.Column="0" Kind="Magnify" Width="15" Height="15"
-                                                    Foreground="{StaticResource SecondaryTextBrush}" VerticalAlignment="Center" />
-                        <TextBox Grid.Column="1" Margin="8,0,0,0" VerticalContentAlignment="Center"
-                                 BorderThickness="0" Background="Transparent" FontSize="13"
-                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+                        <iconPacks:PackIconMaterial Grid.Column="0"
+                                                    Kind="Magnify"
+                                                    Width="15"
+                                                    Height="15"
+                                                    Foreground="{StaticResource SecondaryTextBrush}"
+                                                    VerticalAlignment="Center"/>
+                        <TextBox Grid.Column="1"
+                                 Margin="8,0,0,0"
+                                 VerticalContentAlignment="Center"
+                                 BorderThickness="0"
+                                 Background="Transparent"
+                                 FontSize="13"
+                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
                     </Grid>
                 </Border>
             </Grid>
 
             <!-- Products table -->
-            <Border Grid.Row="2" Background="{StaticResource CardBrush}" CornerRadius="16" Padding="24,8">
+            <Border Grid.Row="2"
+                    Background="{StaticResource CardBrush}"
+                    CornerRadius="16"
+                    Padding="24,8">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <Grid Grid.Row="0" Margin="0,12,0,8">
+                    <Grid Grid.Row="0"
+                          Margin="0,12,0,8">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="130" />
-                            <ColumnDefinition Width="150" />
-                            <ColumnDefinition Width="90" />
-                            <ColumnDefinition Width="110" />
-                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="130"/>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="110"/>
+                            <ColumnDefinition Width="120"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="Товар" Style="{StaticResource ColHeader}" />
-                        <TextBlock Grid.Column="1" Text="Артикул" Style="{StaticResource ColHeader}" />
-                        <TextBlock Grid.Column="2" Text="Категория" Style="{StaticResource ColHeader}" />
-                        <TextBlock Grid.Column="3" Text="Остаток" Style="{StaticResource ColHeader}" />
-                        <TextBlock Grid.Column="4" Text="Цена" Style="{StaticResource ColHeader}" />
-                        <TextBlock Grid.Column="5" Text="Статус" Style="{StaticResource ColHeader}" />
+                        <TextBlock Grid.Column="0"
+                                   Text="Товар"
+                                   Style="{StaticResource ColHeader}"/>
+                        <TextBlock Grid.Column="1"
+                                   Text="Артикул"
+                                   Style="{StaticResource ColHeader}"/>
+                        <TextBlock Grid.Column="2"
+                                   Text="Категория"
+                                   Style="{StaticResource ColHeader}"/>
+                        <TextBlock Grid.Column="3"
+                                   Text="Остаток"
+                                   Style="{StaticResource ColHeader}"/>
+                        <TextBlock Grid.Column="4"
+                                   Text="Цена"
+                                   Style="{StaticResource ColHeader}"/>
+                        <TextBlock Grid.Column="5"
+                                   Text="Статус"
+                                   Style="{StaticResource ColHeader}"/>
                     </Grid>
 
-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ScrollViewer Grid.Row="1"
+                                  VerticalScrollBarVisibility="Auto">
                         <ItemsControl ItemsSource="{Binding Products}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border BorderBrush="{StaticResource DividerBrush}" BorderThickness="0,1,0,0" Padding="0,14">
+                                    <Border BorderBrush="{StaticResource DividerBrush}"
+                                            BorderThickness="0,1,0,0"
+                                            Padding="0,14">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="130" />
-                                                <ColumnDefinition Width="150" />
-                                                <ColumnDefinition Width="90" />
-                                                <ColumnDefinition Width="110" />
-                                                <ColumnDefinition Width="120" />
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="130"/>
+                                                <ColumnDefinition Width="150"/>
+                                                <ColumnDefinition Width="90"/>
+                                                <ColumnDefinition Width="110"/>
+                                                <ColumnDefinition Width="120"/>
                                             </Grid.ColumnDefinitions>
 
-                                            <TextBlock Grid.Column="0" Text="{Binding Name}" Style="{StaticResource Cell}" />
-                                            <TextBlock Grid.Column="1" Text="{Binding Sku}" Style="{StaticResource Cell}"
-                                                       Foreground="{StaticResource SecondaryTextBrush}" />
-                                            <TextBlock Grid.Column="2" Text="{Binding Category}" Style="{StaticResource Cell}"
-                                                       Foreground="{StaticResource SecondaryTextBrush}" />
-                                            <TextBlock Grid.Column="3" Text="{Binding Quantity}" Style="{StaticResource Cell}" />
-                                            <TextBlock Grid.Column="4" Style="{StaticResource Cell}"
-                                                       Text="{Binding Price, Converter={StaticResource MoneyToRubleConverter}}" />
+                                            <TextBlock Grid.Column="0"
+                                                       Text="{Binding Name}"
+                                                       Style="{StaticResource Cell}"/>
+                                            <TextBlock Grid.Column="1"
+                                                       Text="{Binding Sku}"
+                                                       Style="{StaticResource Cell}"
+                                                       Foreground="{StaticResource SecondaryTextBrush}"/>
+                                            <TextBlock Grid.Column="2"
+                                                       Text="{Binding Category}"
+                                                       Style="{StaticResource Cell}"
+                                                       Foreground="{StaticResource SecondaryTextBrush}"/>
+                                            <TextBlock Grid.Column="3"
+                                                       Text="{Binding Quantity}"
+                                                       Style="{StaticResource Cell}"/>
+                                            <TextBlock Grid.Column="4"
+                                                       Style="{StaticResource Cell}"
+                                                       Text="{Binding Price, Converter={StaticResource MoneyToRubleConverter}}"/>
 
-                                            <Border Grid.Column="5" CornerRadius="10" Padding="10,3"
-                                                    HorizontalAlignment="Left" VerticalAlignment="Center">
+                                            <Border Grid.Column="5"
+                                                    CornerRadius="10"
+                                                    Padding="10,3"
+                                                    HorizontalAlignment="Left"
+                                                    VerticalAlignment="Center">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
-                                                        <Setter Property="Background" Value="#D9F0DD" />
+                                                        <Setter Property="Background"
+                                                                Value="#D9F0DD"/>
                                                         <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding Status}" Value="Low">
-                                                                <Setter Property="Background" Value="#F7EAC9" />
+                                                            <DataTrigger Binding="{Binding Status}"
+                                                                         Value="Low">
+                                                                <Setter Property="Background"
+                                                                        Value="#F7EAC9"/>
                                                             </DataTrigger>
-                                                            <DataTrigger Binding="{Binding Status}" Value="OutOfStock">
-                                                                <Setter Property="Background" Value="#F8D7D7" />
+                                                            <DataTrigger Binding="{Binding Status}"
+                                                                         Value="OutOfStock">
+                                                                <Setter Property="Background"
+                                                                        Value="#F8D7D7"/>
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
                                                 </Border.Style>
-                                                <TextBlock FontSize="12" FontWeight="SemiBold">
+                                                <TextBlock FontSize="12"
+                                                           FontWeight="SemiBold">
                                                     <TextBlock.Style>
                                                         <Style TargetType="TextBlock">
-                                                            <Setter Property="Text" Value="в наличии" />
-                                                            <Setter Property="Foreground" Value="#3F9D52" />
+                                                            <Setter Property="Text"
+                                                                    Value="в наличии"/>
+                                                            <Setter Property="Foreground"
+                                                                    Value="#3F9D52"/>
                                                             <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding Status}" Value="Low">
-                                                                    <Setter Property="Text" Value="мало" />
-                                                                    <Setter Property="Foreground" Value="#B8862E" />
+                                                                <DataTrigger Binding="{Binding Status}"
+                                                                             Value="Low">
+                                                                    <Setter Property="Text"
+                                                                            Value="мало"/>
+                                                                    <Setter Property="Foreground"
+                                                                            Value="#B8862E"/>
                                                                 </DataTrigger>
-                                                                <DataTrigger Binding="{Binding Status}" Value="OutOfStock">
-                                                                    <Setter Property="Text" Value="нет" />
-                                                                    <Setter Property="Foreground" Value="#D24B4B" />
+                                                                <DataTrigger Binding="{Binding Status}"
+                                                                             Value="OutOfStock">
+                                                                    <Setter Property="Text"
+                                                                            Value="нет"/>
+                                                                    <Setter Property="Foreground"
+                                                                            Value="#D24B4B"/>
                                                                 </DataTrigger>
                                                             </Style.Triggers>
                                                         </Style>
@@ -400,82 +603,126 @@
                 </Grid>
             </Border>
 
-            <TextBlock Grid.Row="2" Text="{Binding Error}" Foreground="{StaticResource ErrorBrush}"
-                       VerticalAlignment="Bottom" Margin="4"
-                       Visibility="{Binding Error, Converter={StaticResource NullToCollapsedConverter}}" />
+            <TextBlock Grid.Row="2"
+                       Text="{Binding Error}"
+                       Foreground="{StaticResource ErrorBrush}"
+                       VerticalAlignment="Bottom"
+                       Margin="4"
+                       Visibility="{Binding Error, Converter={StaticResource NullToCollapsedConverter}}"/>
         </Grid>
 
         <!-- ── Receive overlay ───────────────────────────────────────────── -->
         <Border Background="#55000000"
                 Visibility="{Binding IsReceiveOpen, Converter={StaticResource BoolToVisibilityConverter}}">
-            <Border Background="White" CornerRadius="16" Padding="28" Width="440"
-                    HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Border Background="White"
+                    CornerRadius="16"
+                    Padding="28"
+                    Width="440"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
                 <StackPanel>
-                    <TextBlock Text="Приёмка товара" FontSize="20" FontWeight="Bold"
-                               Foreground="{StaticResource HeadingBrush}" />
+                    <TextBlock Text="Приёмка товара"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               Foreground="{StaticResource HeadingBrush}"/>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
-                        <RadioButton Content="Существующий" GroupName="receiveMode" Margin="0,0,20,0"
+                    <StackPanel Orientation="Horizontal"
+                                Margin="0,16,0,0">
+                        <RadioButton Content="Существующий"
+                                     GroupName="receiveMode"
+                                     Margin="0,0,20,0"
                                      Foreground="{StaticResource HeadingBrush}"
-                                     IsChecked="{Binding ReceiveIsNewProduct, Converter={StaticResource InverseBooleanConverter}}" />
-                        <RadioButton Content="Новый товар" GroupName="receiveMode"
+                                     IsChecked="{Binding ReceiveIsNewProduct, Converter={StaticResource InverseBooleanConverter}}"/>
+                        <RadioButton Content="Новый товар"
+                                     GroupName="receiveMode"
                                      Foreground="{StaticResource HeadingBrush}"
-                                     IsChecked="{Binding ReceiveIsNewProduct}" />
+                                     IsChecked="{Binding ReceiveIsNewProduct}"/>
                     </StackPanel>
 
                     <!-- Existing product -->
                     <StackPanel>
                         <StackPanel.Style>
                             <Style TargetType="StackPanel">
-                                <Setter Property="Visibility" Value="Visible" />
+                                <Setter Property="Visibility"
+                                        Value="Visible"/>
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ReceiveIsNewProduct}" Value="True">
-                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    <DataTrigger Binding="{Binding ReceiveIsNewProduct}"
+                                                 Value="True">
+                                        <Setter Property="Visibility"
+                                                Value="Collapsed"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </StackPanel.Style>
-                        <TextBlock Text="Товар" Style="{StaticResource FieldLabel}" />
-                        <ComboBox Style="{StaticResource InputCombo}" ItemsSource="{Binding AllProducts}"
-                                  ItemTemplate="{StaticResource ComboItemName}" SelectedItem="{Binding ReceiveSelectedProduct}" />
+                        <TextBlock Text="Товар"
+                                   Style="{StaticResource FieldLabel}"/>
+                        <ComboBox Style="{StaticResource InputCombo}"
+                                  ItemsSource="{Binding AllProducts}"
+                                  DisplayMemberPa 15
+                                comth="Name"
+                                  SelectedItem="{Binding ReceiveSelectedProduct}"/>
                     </StackPanel>
 
                     <!-- New product -->
                     <StackPanel>
                         <StackPanel.Style>
                             <Style TargetType="StackPanel">
-                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Setter Property="Visibility"
+                                        Value="Collapsed"/>
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding ReceiveIsNewProduct}" Value="True">
-                                        <Setter Property="Visibility" Value="Visible" />
+                                    <DataTrigger Binding="{Binding ReceiveIsNewProduct}"
+                                                 Value="True">
+                                        <Setter Property="Visibility"
+                                                Value="Visible"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </StackPanel.Style>
-                        <TextBlock Text="Артикул" Style="{StaticResource FieldLabel}" />
-                        <TextBox Style="{StaticResource InputBox}" Text="{Binding ReceiveNewSku, UpdateSourceTrigger=PropertyChanged}" />
-                        <TextBlock Text="Название" Style="{StaticResource FieldLabel}" />
-                        <TextBox Style="{StaticResource InputBox}" Text="{Binding ReceiveNewName, UpdateSourceTrigger=PropertyChanged}" />
-                        <TextBlock Text="Категория" Style="{StaticResource FieldLabel}" />
-                        <ComboBox Style="{StaticResource InputCombo}" ItemsSource="{Binding Categories}"
-                                  ItemTemplate="{StaticResource ComboItemName}" SelectedItem="{Binding ReceiveSelectedCategory}" />
-                        <TextBlock Text="Цена, ₽" Style="{StaticResource FieldLabel}" />
-                        <TextBox Style="{StaticResource InputBox}" Text="{Binding ReceiveNewPrice, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Text="Артикул"
+                                   Style="{StaticResource FieldLabel}"/>
+                        <TextBox Style="{StaticResou 15 comrce InputBox}"
+                                 Text="{Binding ReceiveNewSku, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Text="Название"
+                                   Style="{StaticResource FieldLabel}"/>
+                        <TextBox Style="{StaticResource InputBox}"
+                                 Text="{Binding ReceiveNewName, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Text="Категория"
+                                   Style="{StaticResource FieldLabel}"/>
+                        <ComboBox Style="{StaticResource InputCombo}"
+                                  ItemsSource="{Binding Categories}"
+                                  DisplayMemberPath="Name"
+                                  SelectedItem="{Binding ReceiveSelectedCategory}"/>
+                        <TextBlock Text="Цена, ₽"
+                                   Style="{StaticResource FieldLabel}"/>
+                        <TextBox Style="{StaticResource InputBox}"
+                                 Text="{Binding ReceiveNewPrice, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
 
-                    <TextBlock Text="Количество" Style="{StaticResource FieldLabel}" />
-                    <TextBox Style="{StaticResource InputBox}" Text="{Binding ReceiveQuantity, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Text="Количество"
+                               Style="{StaticResource FieldLabel}"/>
+                    <TextBox Style="{StaticResource InputBox}"
+                             Text="{Binding ReceiveQuantity, UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <TextBlock Text="{Binding ReceiveError}" Foreground="{StaticResource ErrorBrush}" FontSize="13"
-                               Margin="0,12,0,0" TextWrapping="Wrap"
-                               Visibility="{Binding ReceiveError, Converter={StaticResource NullToCollapsedConverter}}" />
+                    <TextBlock Text="{Binding ReceiveError}"
+                               Foreground="{StaticResource ErrorBrush}"
+                               FontSize="13"
+                               Margin="0,12,0,0"
+                               TextWrapping="Wrap"
+                               Visibility="{Binding ReceiveError, Converter={StaticResource NullToCollapsedConverter}}"/>
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-                        <Button Content="Отмена" Style="{StaticResource SecondaryButton}" MinWidth="110"
-                                Command="{Binding CancelReceiveCommand}" Margin="0,0,12,0" />
-                        <Button Content="Принять" Style="{StaticResource PrimaryButton}" MinWidth="130"
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                Margin="0,20,0,0">
+                        <Button Content="Отмена"
+                                Style="{StaticResource SecondaryButton}"
+                                MinWidth="110"
+                                Command="{Binding CancelReceiveCommand}"
+                                Margin="0,0,12,0"/>
+                        <Button Content="Принять"
+                                Style="{StaticResource PrimaryButton}"
+                                MinWidth="130"
                                 Command="{Binding SubmitReceiveCommand}"
-                                IsEnabled="{Binding ReceiveBusy, Converter={StaticResource InverseBooleanConverter}}" />
+                                IsEnabled="{Binding ReceiveBusy, Converter={StaticResource InverseBooleanConverter}}"/>
                     </StackPanel>
                 </StackPanel>
             </Border>
@@ -484,33 +731,57 @@
         <!-- ── Write-off overlay ─────────────────────────────────────────── -->
         <Border Background="#55000000"
                 Visibility="{Binding IsWriteOffOpen, Converter={StaticResource BoolToVisibilityConverter}}">
-            <Border Background="White" CornerRadius="16" Padding="28" Width="440"
-                    HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Border Background="White"
+                    CornerRadius="16"
+                    Padding="28"
+                    Width="440"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
                 <StackPanel>
-                    <TextBlock Text="Списание товара" FontSize="20" FontWeight="Bold"
-                               Foreground="{StaticResource HeadingBrush}" />
+                    <TextBlock Text="Списание товара"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               Foreground="{StaticResource HeadingBrush}"/>
 
-                    <TextBlock Text="Товар" Style="{StaticResource FieldLabel}" />
-                    <ComboBox Style="{StaticResource InputCombo}" ItemsSource="{Binding AllProducts}"
-                              ItemTemplate="{StaticResource ComboItemName}" SelectedItem="{Binding WriteOffSelectedProduct}" />
+                    <TextBlock Text="Товар"
+                               Style="{StaticResource FieldLabel}"/>
+                    <ComboBox Style="{StaticResource InputCombo}"
+                              ItemsSource="{Binding AllProducts}"
+                              DisplayMemberPath="Name"
+                              SelectedItem="{Binding WriteOffSelectedProduct}"/>
 
-                    <TextBlock Text="Количество" Style="{StaticResource FieldLabel}" />
-                    <TextBox Style="{StaticResource InputBox}" Text="{Binding WriteOffQuantity, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Text="Количество"
+                               Style="{StaticResource FieldLabel}"/>
+                    <TextBox Style="{StaticResource InputBox}"
+                             Text="{Binding WriteOffQuantity, UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <TextBlock Text="Причина" Style="{StaticResource FieldLabel}" />
-                    <ComboBox Style="{StaticResource InputCombo}" ItemsSource="{Binding WriteOffReasons}"
-                              ItemTemplate="{StaticResource ComboItemLabel}" SelectedItem="{Binding WriteOffSelectedReason}" />
+                    <TextBlock Text="Причина"
+                               Style="{StaticResource FieldLabel}"/>
+                    <ComboBox Style="{StaticResource InputCombo}"
+                              ItemsSource="{Binding WriteOffReasons}"
+                              DisplayMemberPath="Label"
+                              SelectedItem="{Binding WriteOffSelectedReason}"/>
 
-                    <TextBlock Text="{Binding WriteOffError}" Foreground="{StaticResource ErrorBrush}" FontSize="13"
-                               Margin="0,12,0,0" TextWrapping="Wrap"
-                               Visibility="{Binding WriteOffError, Converter={StaticResource NullToCollapsedConverter}}" />
+                    <TextBlock Text="{Binding WriteOffError}"
+                               Foreground="{StaticResource ErrorBrush}"
+                               FontSize="13"
+                               Margin="0,12,0,0"
+                               TextWrapping="Wrap"
+                               Visibility="{Binding WriteOffError, Converter={StaticResource NullToCollapsedConverter}}"/>
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-                        <Button Content="Отмена" Style="{StaticResource SecondaryButton}" MinWidth="110"
-                                Command="{Binding CancelWriteOffCommand}" Margin="0,0,12,0" />
-                        <Button Content="Списать" Style="{StaticResource PrimaryButton}" MinWidth="130"
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                Margin="0,20,0,0">
+                        <Button Content="Отмена"
+                                Style="{StaticResource SecondaryButton}"
+                                MinWidth="110"
+                                Command="{Binding CancelWriteOffCommand}"
+                                Margin="0,0,12,0"/>
+                        <Button Content="Списать"
+                                Style="{StaticResource PrimaryButton}"
+                                MinWidth="130"
                                 Command="{Binding SubmitWriteOffCommand}"
-                                IsEnabled="{Binding WriteOffBusy, Converter={StaticResource InverseBooleanConverter}}" />
+                                IsEnabled="{Binding WriteOffBusy, Converter={StaticResource InverseBooleanConverter}}"/>
                     </StackPanel>
                 </StackPanel>
             </Border>
