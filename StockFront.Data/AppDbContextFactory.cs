@@ -25,6 +25,9 @@ public sealed class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbConte
 
         var options = new DbContextOptionsBuilder<AppDbContext>()
             .UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 36)))
+            // Must match the runtime registration (see DependencyInjection) so design-time
+            // scaffolding produces snake_case identifiers too.
+            .UseSnakeCaseNamingConvention()
             .Options;
 
         return new AppDbContext(options);

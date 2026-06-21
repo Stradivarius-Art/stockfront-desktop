@@ -17,7 +17,11 @@ public static class DependencyInjection
         // Transient lifetime: a WPF host resolves from the root provider with no ambient scope,
         // so a per-operation context (rather than the default scoped one) avoids scope errors.
         services.AddDbContext<AppDbContext>(
-            options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)),
+            options => options
+                .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+                // DB convention: snake_case identifiers (tables, columns, indexes, keys, FKs);
+                // C# stays PascalCase. The mapping is applied globally here, see stockfront-database skill.
+                .UseSnakeCaseNamingConvention(),
             ServiceLifetime.Transient);
 
         services.AddTransient<IUserRepository, UserRepository>();
