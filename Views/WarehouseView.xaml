@@ -132,6 +132,15 @@
             </Setter>
         </Style>
 
+        <!-- Item templates: also used for the closed selection box, so the name/label renders
+             instead of the object's ToString() under the custom ComboBox template. -->
+        <DataTemplate x:Key="ComboItemName">
+            <TextBlock Text="{Binding Name}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+        </DataTemplate>
+        <DataTemplate x:Key="ComboItemLabel">
+            <TextBlock Text="{Binding Label}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+        </DataTemplate>
+
         <!-- Rounded dropdown item — matches the rest of the rounded UI -->
         <Style x:Key="RoundedComboItem" TargetType="ComboBoxItem">
             <Setter Property="Padding" Value="12,8" />
@@ -428,7 +437,7 @@
                         </StackPanel.Style>
                         <TextBlock Text="Товар" Style="{StaticResource FieldLabel}" />
                         <ComboBox Style="{StaticResource InputCombo}" ItemsSource="{Binding AllProducts}"
-                                  DisplayMemberPath="Name" SelectedItem="{Binding ReceiveSelectedProduct}" />
+                                  ItemTemplate="{StaticResource ComboItemName}" SelectedItem="{Binding ReceiveSelectedProduct}" />
                     </StackPanel>
 
                     <!-- New product -->
@@ -449,7 +458,7 @@
                         <TextBox Style="{StaticResource InputBox}" Text="{Binding ReceiveNewName, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBlock Text="Категория" Style="{StaticResource FieldLabel}" />
                         <ComboBox Style="{StaticResource InputCombo}" ItemsSource="{Binding Categories}"
-                                  DisplayMemberPath="Name" SelectedItem="{Binding ReceiveSelectedCategory}" />
+                                  ItemTemplate="{StaticResource ComboItemName}" SelectedItem="{Binding ReceiveSelectedCategory}" />
                         <TextBlock Text="Цена, ₽" Style="{StaticResource FieldLabel}" />
                         <TextBox Style="{StaticResource InputBox}" Text="{Binding ReceiveNewPrice, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
@@ -483,14 +492,14 @@
 
                     <TextBlock Text="Товар" Style="{StaticResource FieldLabel}" />
                     <ComboBox Style="{StaticResource InputCombo}" ItemsSource="{Binding AllProducts}"
-                              DisplayMemberPath="Name" SelectedItem="{Binding WriteOffSelectedProduct}" />
+                              ItemTemplate="{StaticResource ComboItemName}" SelectedItem="{Binding WriteOffSelectedProduct}" />
 
                     <TextBlock Text="Количество" Style="{StaticResource FieldLabel}" />
                     <TextBox Style="{StaticResource InputBox}" Text="{Binding WriteOffQuantity, UpdateSourceTrigger=PropertyChanged}" />
 
                     <TextBlock Text="Причина" Style="{StaticResource FieldLabel}" />
                     <ComboBox Style="{StaticResource InputCombo}" ItemsSource="{Binding WriteOffReasons}"
-                              DisplayMemberPath="Label" SelectedItem="{Binding WriteOffSelectedReason}" />
+                              ItemTemplate="{StaticResource ComboItemLabel}" SelectedItem="{Binding WriteOffSelectedReason}" />
 
                     <TextBlock Text="{Binding WriteOffError}" Foreground="{StaticResource ErrorBrush}" FontSize="13"
                                Margin="0,12,0,0" TextWrapping="Wrap"
