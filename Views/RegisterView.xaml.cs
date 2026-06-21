@@ -1,5 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using MahApps.Metro.IconPacks;
 using stockfront.ViewModels;
 
 namespace stockfront.Views;
@@ -45,6 +47,30 @@ public partial class RegisterView : Window
 
     private void ConfirmPasswordBox_OnPasswordChanged(object sender, RoutedEventArgs e) =>
         _viewModel.ConfirmPassword = ((PasswordBox)sender).Password;
+
+    // Hold-to-reveal: while an eye button is held, show the plain password in its overlay TextBox;
+    // restore the masked PasswordBox on release or when the cursor leaves the button. The button's
+    // Tag ("Password"/"Confirm") selects which field to act on.
+    private void EyeButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e) =>
+        SetRevealed(sender, true);
+    private void EyeButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e) =>
+        SetRevealed(sender, false);
+    private void EyeButton_MouseLeave(object sender, MouseEventArgs e) =>
+        SetRevealed(sender, false);
+
+    private void SetRevealed(object sender, bool revealed)
+    {
+        var isConfirm = (string?)((FrameworkElement)sender).Tag == "Confirm";
+        var passwordBox = isConfirm ? ConfirmPasswordBox : PasswordBox;
+        var textBox = isConfirm ? ConfirmPasswordTextBox : PasswordTextBox;
+        var icon = isConfirm ? ConfirmPasswordEyeIcon : PasswordEyeIcon;
+
+        if (revealed)
+            textBox.Text = passwordBox.Password;
+        textBox.Visibility = revealed ? Visibility.Visible : Visibility.Collapsed;
+        passwordBox.Visibility = revealed ? Visibility.Collapsed : Visibility.Visible;
+        icon.Kind = revealed ? PackIconMaterialKind.EyeOffOutline : PackIconMaterialKind.EyeOutline;
+    }
 
     protected override void OnClosed(EventArgs e)
     {

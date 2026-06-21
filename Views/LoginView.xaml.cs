@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using stockfront.ViewModels;
 
 namespace stockfront.Views;
@@ -39,6 +40,27 @@ public partial class LoginView : Window
 
     private void PasswordBox_OnPasswordChanged(object sender, RoutedEventArgs e) =>
         _viewModel.Password = ((PasswordBox)sender).Password;
+
+    // Hold-to-reveal: while the eye button is held down, show the plain password in an overlay
+    // TextBox; restore the masked PasswordBox on release or when the cursor leaves the button.
+    private void EyeButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e) => RevealPassword();
+    private void EyeButton_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e) => HidePassword();
+    private void EyeButton_MouseLeave(object sender, MouseEventArgs e) => HidePassword();
+
+    private void RevealPassword()
+    {
+        PasswordTextBox.Text = PasswordBox.Password;
+        PasswordTextBox.Visibility = Visibility.Visible;
+        PasswordBox.Visibility = Visibility.Collapsed;
+        EyeIcon.Kind = MahApps.Metro.IconPacks.PackIconMaterialKind.EyeOffOutline;
+    }
+
+    private void HidePassword()
+    {
+        PasswordTextBox.Visibility = Visibility.Collapsed;
+        PasswordBox.Visibility = Visibility.Visible;
+        EyeIcon.Kind = MahApps.Metro.IconPacks.PackIconMaterialKind.EyeOutline;
+    }
 
     protected override void OnClosed(EventArgs e)
     {

@@ -58,9 +58,34 @@
                        FontSize="12" Margin="2,16,0,6" />
             <Border CornerRadius="10" Background="White" BorderBrush="{StaticResource DividerBrush}"
                     BorderThickness="1">
-                <PasswordBox x:Name="PasswordBox" BorderThickness="0" Background="Transparent"
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <PasswordBox x:Name="PasswordBox" Grid.Column="0" BorderThickness="0" Background="Transparent"
+                                 Height="44" Padding="14,0" VerticalContentAlignment="Center" FontSize="14"
+                                 PasswordChanged="PasswordBox_OnPasswordChanged" />
+                    <TextBox x:Name="PasswordTextBox" Grid.Column="0" BorderThickness="0" Background="Transparent"
                              Height="44" Padding="14,0" VerticalContentAlignment="Center" FontSize="14"
-                             PasswordChanged="PasswordBox_OnPasswordChanged" />
+                             IsReadOnly="True" Focusable="False" Visibility="Collapsed" />
+                    <Button x:Name="EyeButton" Grid.Column="1" Background="Transparent" BorderThickness="0"
+                            Cursor="Hand" Focusable="False" Padding="10,0" Margin="0,0,4,0"
+                            PreviewMouseLeftButtonDown="EyeButton_PreviewMouseLeftButtonDown"
+                            PreviewMouseLeftButtonUp="EyeButton_PreviewMouseLeftButtonUp"
+                            MouseLeave="EyeButton_MouseLeave">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="Transparent">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                        <iconPacks:PackIconMaterial x:Name="EyeIcon" Kind="EyeOutline"
+                                                    Foreground="{StaticResource SecondaryTextBrush}"
+                                                    Width="20" Height="20" />
+                    </Button>
+                </Grid>
             </Border>
 
             <TextBlock Text="{Binding InfoMessage}"

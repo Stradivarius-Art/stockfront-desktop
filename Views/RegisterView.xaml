@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:stockfront.ViewModels"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:RegisterViewModel}"
         Title="StockFront — Регистрация"
@@ -30,6 +31,27 @@
             <Setter Property="Background" Value="White" />
             <Setter Property="BorderBrush" Value="{StaticResource DividerBrush}" />
             <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <!-- Hold-to-reveal "eye" button shared by both password fields. The Tag selects the field. -->
+        <Style x:Key="EyeButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="Padding" Value="10,0" />
+            <Setter Property="Margin" Value="0,0,4,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="Transparent">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="EyeButton_PreviewMouseLeftButtonDown" />
+            <EventSetter Event="PreviewMouseLeftButtonUp" Handler="EyeButton_PreviewMouseLeftButtonUp" />
+            <EventSetter Event="MouseLeave" Handler="EyeButton_MouseLeave" />
         </Style>
     </Window.Resources>
 
@@ -67,9 +89,23 @@
             <!-- Password -->
             <TextBlock Text="Пароль" Style="{StaticResource FieldLabel}" />
             <Border Style="{StaticResource InputBorder}">
-                <PasswordBox x:Name="PasswordBox" Height="42" Padding="14,0" VerticalContentAlignment="Center"
-                             FontSize="14" BorderThickness="0" Background="Transparent"
-                             PasswordChanged="PasswordBox_OnPasswordChanged" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <PasswordBox x:Name="PasswordBox" Grid.Column="0" Height="42" Padding="14,0"
+                                 VerticalContentAlignment="Center" FontSize="14" BorderThickness="0"
+                                 Background="Transparent" PasswordChanged="PasswordBox_OnPasswordChanged" />
+                    <TextBox x:Name="PasswordTextBox" Grid.Column="0" Height="42" Padding="14,0"
+                             VerticalContentAlignment="Center" FontSize="14" BorderThickness="0"
+                             Background="Transparent" IsReadOnly="True" Focusable="False" Visibility="Collapsed" />
+                    <Button Grid.Column="1" Style="{StaticResource EyeButton}" Tag="Password">
+                        <iconPacks:PackIconMaterial x:Name="PasswordEyeIcon" Kind="EyeOutline"
+                                                    Foreground="{StaticResource SecondaryTextBrush}"
+                                                    Width="20" Height="20" />
+                    </Button>
+                </Grid>
             </Border>
             <TextBlock Text="{Binding PasswordError}" Style="{StaticResource ErrorText}"
                        Visibility="{Binding PasswordError, Converter={StaticResource NullToCollapsedConverter}}" />
@@ -77,9 +113,23 @@
             <!-- Confirm password -->
             <TextBlock Text="Повторите пароль" Style="{StaticResource FieldLabel}" />
             <Border Style="{StaticResource InputBorder}">
-                <PasswordBox x:Name="ConfirmPasswordBox" Height="42" Padding="14,0" VerticalContentAlignment="Center"
-                             FontSize="14" BorderThickness="0" Background="Transparent"
-                             PasswordChanged="ConfirmPasswordBox_OnPasswordChanged" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <PasswordBox x:Name="ConfirmPasswordBox" Grid.Column="0" Height="42" Padding="14,0"
+                                 VerticalContentAlignment="Center" FontSize="14" BorderThickness="0"
+                                 Background="Transparent" PasswordChanged="ConfirmPasswordBox_OnPasswordChanged" />
+                    <TextBox x:Name="ConfirmPasswordTextBox" Grid.Column="0" Height="42" Padding="14,0"
+                             VerticalContentAlignment="Center" FontSize="14" BorderThickness="0"
+                             Background="Transparent" IsReadOnly="True" Focusable="False" Visibility="Collapsed" />
+                    <Button Grid.Column="1" Style="{StaticResource EyeButton}" Tag="Confirm">
+                        <iconPacks:PackIconMaterial x:Name="ConfirmPasswordEyeIcon" Kind="EyeOutline"
+                                                    Foreground="{StaticResource SecondaryTextBrush}"
+                                                    Width="20" Height="20" />
+                    </Button>
+                </Grid>
             </Border>
             <TextBlock Text="{Binding ConfirmPasswordError}" Style="{StaticResource ErrorText}"
                        Visibility="{Binding ConfirmPasswordError, Converter={StaticResource NullToCollapsedConverter}}" />
