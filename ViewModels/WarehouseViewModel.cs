@@ -15,10 +15,14 @@ namespace stockfront.ViewModels;
 /// </summary>
 public sealed partial class WarehouseViewModel : ObservableObject
 {
-    // Built-in chips that always precede the per-category ones.
+    // Built-in status chips that always precede the per-category ones. One per actionable bucket of
+    // the Days-of-Supply traffic light.
     private const string FilterAll = "Все";
-    private const string FilterLow = "Низкий остаток";
-    private const string FilterOut = "Нет в наличии";
+    private const string FilterCritical = "Критично";
+    private const string FilterLow = "Мало";
+    private const string FilterOut = "Нет";
+    private const string FilterOverstock = "Избыток";
+    private const string FilterIlliquid = "Неликвид";
 
     private readonly IWarehouseService _warehouse;
 
@@ -93,8 +97,11 @@ public sealed partial class WarehouseViewModel : ObservableObject
 
         Filters.Clear();
         Filters.Add(FilterAll);
+        Filters.Add(FilterCritical);
         Filters.Add(FilterLow);
         Filters.Add(FilterOut);
+        Filters.Add(FilterOverstock);
+        Filters.Add(FilterIlliquid);
         foreach (var c in categories)
             Filters.Add(c);
 
@@ -109,8 +116,11 @@ public sealed partial class WarehouseViewModel : ObservableObject
         rows = ActiveFilter switch
         {
             FilterAll => rows,
+            FilterCritical => rows.Where(p => p.Status == StockStatus.Critical),
             FilterLow => rows.Where(p => p.Status == StockStatus.Low),
             FilterOut => rows.Where(p => p.Status == StockStatus.OutOfStock),
+            FilterOverstock => rows.Where(p => p.Status == StockStatus.Overstock),
+            FilterIlliquid => rows.Where(p => p.Status == StockStatus.Illiquid),
             _ => rows.Where(p => p.Category == ActiveFilter),
         };
 
@@ -274,6 +284,51 @@ public sealed partial class WarehouseViewModel : ObservableObject
         {
             WriteOffBusy = false;
         }
+    }
+
+    // ── Operations journal (история операций + откат) ──────────────────────────────
+
+    /// <summary>The stock-movement history shown in the journal overlay (newest first).</summary>
+    public ObservableCollection<StockMovementRow> Movements { get; } = new();
+
+    [ObservableProperty] private bool _isJournalOpen;
+    [ObservableProperty] private string? _journalError;
+
+    [RelayCommand]
+    private async Task OpenJournalAsync()
+    {
+        JournalError = null;
+        IsJournalOpen = true;
+        await LoadMovementsAsync();
+    }
+
+    [RelayCommand]
+    private void CloseJournal() => IsJournalOpen = false;
+
+    private async Task LoadMovementsAsync()
+    {
+        Movements.Clear();
+        foreach (var m in await _warehouse.GetMovementsAsync())
+            Movements.Add(m);
+    }
+
+    [RelayCommand]
+    private async Task RevertMovementAsync(StockMovementRow? movement)
+    {
+        if (movement is null)
+            return;
+
+        JournalError = null;
+        var result = await _warehouse.RevertMovementAsync(movement.Id);
+        if (!result.Succeeded)
+        {
+            JournalError = result.Error;
+            return;
+        }
+
+        // Stock changed: refresh both the journal and the table behind it.
+        await LoadMovementsAsync();
+        await LoadAsync();
     }
 
     private static bool TryParseQuantity(string text, out int quantity) =>

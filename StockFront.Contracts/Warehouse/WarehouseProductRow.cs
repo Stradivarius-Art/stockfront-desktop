@@ -3,9 +3,9 @@ using StockFront.Contracts.Dashboard;
 namespace StockFront.Contracts.Warehouse;
 
 /// <summary>
-/// One row of the warehouse table: identity, category, on-hand stock, price and the availability
-/// status badge. <see cref="StockStatus"/> is reused from the dashboard — the same green/amber/red
-/// traffic light.
+/// One row of the warehouse table: identity, category, on-hand stock, price and the derived
+/// availability. <see cref="DaysOfSupply"/> and <see cref="AvgDailySales"/> back the status badge and
+/// its tooltip; <see cref="DaysOfSupply"/> is <c>null</c> when there's no recent demand to divide by.
 /// </summary>
 public sealed record WarehouseProductRow(
     int Id,
@@ -16,4 +16,6 @@ public sealed record WarehouseProductRow(
     int Reserved,
     int Available,
     decimal Price,
-    StockStatus Status);
+    StockStatus Status,
+    double AvgDailySales,
+    double? DaysOfSupply);

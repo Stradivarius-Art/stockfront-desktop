@@ -21,6 +21,16 @@ public sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
         b.Property(x => x.Price)
          .HasColumnType("decimal(12,2)");
 
+        // Set by the database on insert, so "Новинка" works without the app having to stamp the time.
+        b.Property(x => x.CreatedAt)
+         .HasColumnType("datetime(6)")
+         .HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
+
+        // Reorder-point inputs for the Days-of-Supply status. Sensible defaults so new rows are valid.
+        b.Property(x => x.LeadTimeDays).HasDefaultValue(7);
+        b.Property(x => x.SafetyBufferDays).HasDefaultValue(3);
+        b.Property(x => x.IsSeasonal).HasDefaultValue(false);
+
         // SKU must not repeat — the database enforces it better than code.
         b.HasIndex(x => x.Sku).IsUnique();
 

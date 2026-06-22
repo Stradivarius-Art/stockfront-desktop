@@ -12,6 +12,8 @@
         <conv:MoneyToRubleConverter x:Key="MoneyToRubleConverter" />
         <conv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
         <conv:EqualityConverter x:Key="EqualityConverter" />
+        <conv:StockStatusConverter x:Key="StockStatusConverter" />
+        <conv:DaysOfSupplyTooltipConverter x:Key="DaysOfSupplyTooltipConverter" />
         <!-- true → Visible, false → Collapsed. Used to gate sidebar items by the current user's role. -->
         <sys:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
 

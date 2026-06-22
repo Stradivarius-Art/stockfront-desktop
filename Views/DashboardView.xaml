@@ -137,38 +137,11 @@
 
                                         <!-- Status badge -->
                                         <Border Grid.Column="3" CornerRadius="10" Padding="10,3"
-                                                HorizontalAlignment="Left" VerticalAlignment="Center">
-                                            <Border.Style>
-                                                <Style TargetType="Border">
-                                                    <Setter Property="Background" Value="#D9F0DD" />
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Status}" Value="Low">
-                                                            <Setter Property="Background" Value="#F7EAC9" />
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Status}" Value="OutOfStock">
-                                                            <Setter Property="Background" Value="#F8D7D7" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Border.Style>
-                                            <TextBlock FontSize="12" FontWeight="SemiBold">
-                                                <TextBlock.Style>
-                                                    <Style TargetType="TextBlock">
-                                                        <Setter Property="Text" Value="в наличии" />
-                                                        <Setter Property="Foreground" Value="#3F9D52" />
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding Status}" Value="Low">
-                                                                <Setter Property="Text" Value="мало" />
-                                                                <Setter Property="Foreground" Value="#B8862E" />
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding Status}" Value="OutOfStock">
-                                                                <Setter Property="Text" Value="нет" />
-                                                                <Setter Property="Foreground" Value="#D24B4B" />
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </TextBlock.Style>
-                                            </TextBlock>
+                                                HorizontalAlignment="Left" VerticalAlignment="Center"
+                                                Background="{Binding Status, Converter={StaticResource StockStatusConverter}, ConverterParameter=Background}">
+                                            <TextBlock FontSize="12" FontWeight="SemiBold"
+                                                       Text="{Binding Status, Converter={StaticResource StockStatusConverter}, ConverterParameter=Label}"
+                                                       Foreground="{Binding Status, Converter={StaticResource StockStatusConverter}, ConverterParameter=Foreground}" />
                                         </Border>
                                     </Grid>
                                 </Border>

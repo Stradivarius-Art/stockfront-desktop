@@ -10,7 +10,7 @@ public sealed class StockMovementConfiguration : IEntityTypeConfiguration<StockM
     {
         b.HasKey(x => x.Id);
 
-        // Stored as strings ("Receipt"/"WriteOff", "Defective"/…) so journal rows read plainly.
+        // Stored as strings ("Receipt"/"WriteOff"/"ReversalReceipt"/…) so journal rows read plainly.
         b.Property(x => x.Type)
          .HasConversion<string>()
          .HasMaxLength(20)
@@ -21,6 +21,8 @@ public sealed class StockMovementConfiguration : IEntityTypeConfiguration<StockM
          .HasMaxLength(20);
 
         b.Property(x => x.Quantity).IsRequired();
+
+        b.Property(x => x.Comment).HasMaxLength(300);
 
         b.Property(x => x.PerformedBy).HasMaxLength(200);
 
@@ -34,7 +36,14 @@ public sealed class StockMovementConfiguration : IEntityTypeConfiguration<StockM
          .HasForeignKey(x => x.ProductId)
          .OnDelete(DeleteBehavior.Restrict);
 
+        // A reversal points back at the movement it undoes (self-reference); the original must survive.
+        b.HasOne<StockMovement>()
+         .WithMany()
+         .HasForeignKey(x => x.ReversesMovementId)
+         .OnDelete(DeleteBehavior.Restrict);
+
         b.HasIndex(x => x.ProductId);
         b.HasIndex(x => x.CreatedAt);
+        b.HasIndex(x => x.ReversesMovementId);
     }
 }

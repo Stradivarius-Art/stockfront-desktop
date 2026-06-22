@@ -399,6 +399,11 @@
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center">
+                    <Button Content="Журнал операций"
+                            Style="{StaticResource SecondaryButton}"
+                            MinWidth="160"
+                            Command="{Binding OpenJournalCommand}"
+                            Margin="0,0,12,0"/>
                     <Button Content="Списание"
                             Style="{StaticResource SecondaryButton}"
                             MinWidth="130"
@@ -560,52 +565,15 @@
                                                     CornerRadius="10"
                                                     Padding="10,3"
                                                     HorizontalAlignment="Left"
-                                                    VerticalAlignment="Center">
-                                                <Border.Style>
-                                                    <Style TargetType="Border">
-                                                        <Setter Property="Background"
-                                                                Value="#D9F0DD"/>
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding Status}"
-                                                                         Value="Low">
-                                                                <Setter Property="Background"
-                                                                        Value="#F7EAC9"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding Status}"
-                                                                         Value="OutOfStock">
-                                                                <Setter Property="Background"
-                                                                        Value="#F8D7D7"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Border.Style>
+                                                    VerticalAlignment="Center"
+                                                    Background="{Binding Status, Converter={StaticResource StockStatusConverter}, ConverterParameter=Background}">
+                                                <Border.ToolTip>
+                                                    <ToolTip Content="{Binding DaysOfSupply, Converter={StaticResource DaysOfSupplyTooltipConverter}}"/>
+                                                </Border.ToolTip>
                                                 <TextBlock FontSize="12"
-                                                           FontWeight="SemiBold">
-                                                    <TextBlock.Style>
-                                                        <Style TargetType="TextBlock">
-                                                            <Setter Property="Text"
-                                                                    Value="в наличии"/>
-                                                            <Setter Property="Foreground"
-                                                                    Value="#3F9D52"/>
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding Status}"
-                                                                             Value="Low">
-                                                                    <Setter Property="Text"
-                                                                            Value="мало"/>
-                                                                    <Setter Property="Foreground"
-                                                                            Value="#B8862E"/>
-                                                                </DataTrigger>
-                                                                <DataTrigger Binding="{Binding Status}"
-                                                                             Value="OutOfStock">
-                                                                    <Setter Property="Text"
-                                                                            Value="нет"/>
-                                                                    <Setter Property="Foreground"
-                                                                            Value="#D24B4B"/>
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </TextBlock.Style>
-                                                </TextBlock>
+                                                           FontWeight="SemiBold"
+                                                           Text="{Binding Status, Converter={StaticResource StockStatusConverter}, ConverterParameter=Label}"
+                                                           Foreground="{Binding Status, Converter={StaticResource StockStatusConverter}, ConverterParameter=Foreground}"/>
                                             </Border>
                                         </Grid>
                                     </Border>
@@ -796,6 +764,131 @@
                                 IsEnabled="{Binding WriteOffBusy, Converter={StaticResource InverseBooleanConverter}}"/>
                     </StackPanel>
                 </StackPanel>
+            </Border>
+        </Border>
+
+        <!-- ── Operations journal overlay (history + rollback) ───────────────── -->
+        <Border Background="#55000000"
+                Visibility="{Binding IsJournalOpen, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Border Background="White"
+                    CornerRadius="16"
+                    Padding="28"
+                    Width="760"
+                    MaxHeight="560"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               Text="Журнал операций"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               Foreground="{StaticResource HeadingBrush}"/>
+
+                    <!-- Column headers -->
+                    <Grid Grid.Row="1"
+                          Margin="0,18,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="130"/>
+                            <ColumnDefinition Width="70"/>
+                            <ColumnDefinition Width="110"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Дата" Style="{StaticResource ColHeader}"/>
+                        <TextBlock Grid.Column="1" Text="Товар / комментарий" Style="{StaticResource ColHeader}"/>
+                        <TextBlock Grid.Column="2" Text="Операция" Style="{StaticResource ColHeader}"/>
+                        <TextBlock Grid.Column="3" Text="Кол-во" Style="{StaticResource ColHeader}"/>
+                        <TextBlock Grid.Column="4" Text="" Style="{StaticResource ColHeader}"/>
+                    </Grid>
+
+                    <ScrollViewer Grid.Row="2"
+                                  VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding Movements}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="{StaticResource DividerBrush}"
+                                            BorderThickness="0,1,0,0"
+                                            Padding="0,12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="120"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="130"/>
+                                                <ColumnDefinition Width="70"/>
+                                                <ColumnDefinition Width="110"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock Grid.Column="0"
+                                                       Text="{Binding CreatedAt, StringFormat='dd.MM.yy HH:mm'}"
+                                                       Style="{StaticResource Cell}"
+                                                       FontSize="13"
+                                                       Foreground="{StaticResource SecondaryTextBrush}"/>
+
+                                            <StackPanel Grid.Column="1"
+                                                        VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding ProductName}"
+                                                           Style="{StaticResource Cell}"/>
+                                                <TextBlock Text="{Binding Comment}"
+                                                           FontSize="12"
+                                                           Foreground="{StaticResource SecondaryTextBrush}"
+                                                           TextTrimming="CharacterEllipsis"
+                                                           Visibility="{Binding Comment, Converter={StaticResource NullToCollapsedConverter}}"/>
+                                                <TextBlock Text="{Binding Reason}"
+                                                           FontSize="12"
+                                                           Foreground="{StaticResource SecondaryTextBrush}"
+                                                           Visibility="{Binding Reason, Converter={StaticResource NullToCollapsedConverter}}"/>
+                                            </StackPanel>
+
+                                            <TextBlock Grid.Column="2"
+                                                       Text="{Binding TypeLabel}"
+                                                       Style="{StaticResource Cell}"
+                                                       FontSize="13"/>
+
+                                            <TextBlock Grid.Column="3"
+                                                       Text="{Binding Quantity}"
+                                                       Style="{StaticResource Cell}"
+                                                       FontWeight="SemiBold"/>
+
+                                            <Button Grid.Column="4"
+                                                    Content="Откат"
+                                                    Style="{StaticResource SecondaryButton}"
+                                                    Height="34"
+                                                    Command="{Binding DataContext.RevertMovementCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding}"
+                                                    Visibility="{Binding CanRevert, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+
+                    <TextBlock Grid.Row="3"
+                               Text="{Binding JournalError}"
+                               Foreground="{StaticResource ErrorBrush}"
+                               FontSize="13"
+                               Margin="0,12,0,0"
+                               TextWrapping="Wrap"
+                               Visibility="{Binding JournalError, Converter={StaticResource NullToCollapsedConverter}}"/>
+
+                    <StackPanel Grid.Row="4"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                Margin="0,20,0,0">
+                        <Button Content="Закрыть"
+                                Style="{StaticResource SecondaryButton}"
+                                MinWidth="120"
+                                Command="{Binding CloseJournalCommand}"/>
+                    </StackPanel>
+                </Grid>
             </Border>
         </Border>
     </Grid>

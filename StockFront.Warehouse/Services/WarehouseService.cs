@@ -1,21 +1,18 @@
 using StockFront.Contracts.Auth;
-using StockFront.Contracts.Dashboard;
 using StockFront.Contracts.Persistence;
 using StockFront.Contracts.Warehouse;
 
 namespace StockFront.Warehouse.Services;
 
 /// <summary>
-/// Warehouse Accounting business logic. Validates receipts and write-offs, classifies stock into the
-/// availability traffic light, and stamps each movement with the operator who performed it. All data
-/// access goes through <see cref="IWarehouseRepository"/> — this class never touches the database or
-/// EF directly, so it can be unit-tested with a mocked repository.
+/// Warehouse Accounting business logic. Validates receipts and write-offs, derives the availability
+/// traffic light from Days of Supply (via <see cref="StockStatusCalculator"/>), and stamps each
+/// movement with the operator who performed it. Reverting a movement is restricted to administrators.
+/// All data access goes through <see cref="IWarehouseRepository"/> — this class never touches the
+/// database or EF directly, so it can be unit-tested with a mocked repository.
 /// </summary>
 public sealed class WarehouseService : IWarehouseService
 {
-    /// <summary>At or below this many available units a product counts as "low" (мало).</summary>
-    private const int LowStockThreshold = 15;
-
     private readonly IWarehouseRepository _repo;
     private readonly ICurrentUser _currentUser;
 
@@ -27,14 +24,20 @@ public sealed class WarehouseService : IWarehouseService
 
     public async Task<IReadOnlyList<WarehouseProductRow>> GetProductsAsync(CancellationToken ct = default)
     {
+        var now = DateTime.UtcNow;
         var rows = await _repo.GetProductsAsync(ct);
         return rows
             .Select(r =>
             {
                 var available = r.Quantity - r.Reserved;
+                var status = StockStatusCalculator.Classify(new StockStatusInputs(
+                    r.Quantity, r.AvgDailySales, r.LastSale, r.CreatedAt,
+                    r.LeadTimeDays, r.SafetyBufferDays, r.IsSeasonal, now));
+
                 return new WarehouseProductRow(
                     r.Id, r.Sku, r.Name, r.Category, r.Quantity, r.Reserved, available, r.Price,
-                    Classify(available));
+                    status, r.AvgDailySales,
+                    StockStatusCalculator.DaysOfSupply(r.Quantity, r.AvgDailySales));
             })
             .ToList();
     }
@@ -87,10 +90,36 @@ public sealed class WarehouseService : IWarehouseService
             : WarehouseResult.Fail("Недостаточно товара на складе для списания.");
     }
 
-    private string? PerformedBy => _currentUser.User?.DisplayName;
+    public async Task<IReadOnlyList<StockMovementRow>> GetMovementsAsync(
+        int? productId = null, CancellationToken ct = default)
+    {
+        var rows = await _repo.GetMovementsAsync(productId, ct);
 
-    private static StockStatus Classify(int available) =>
-        available <= 0 ? StockStatus.OutOfStock
-        : available <= LowStockThreshold ? StockStatus.Low
-        : StockStatus.InStock;
+        // Reverting is an administrator-only action; fold the role into each row's CanRevert flag so
+        // the UI can bind it directly without knowing the role.
+        var isAdmin = _currentUser.IsInRole(UserRole.Admin);
+        return rows
+            .Select(r => r with { CanRevert = r.CanRevert && isAdmin })
+            .ToList();
+    }
+
+    public async Task<WarehouseResult> RevertMovementAsync(int movementId, CancellationToken ct = default)
+    {
+        if (!_currentUser.IsInRole(UserRole.Admin))
+            return WarehouseResult.Fail("Откат операций доступен только администратору.");
+
+        var outcome = await _repo.RevertMovementAsync(movementId, PerformedBy, ct);
+        return outcome switch
+        {
+            RevertOutcome.Success => WarehouseResult.Ok(),
+            RevertOutcome.NotFound => WarehouseResult.Fail("Операция не найдена."),
+            RevertOutcome.AlreadyReversed => WarehouseResult.Fail("Эта операция уже была отменена."),
+            RevertOutcome.CannotRevertReversal => WarehouseResult.Fail("Нельзя откатить запись отката."),
+            RevertOutcome.InsufficientStock =>
+                WarehouseResult.Fail("Откат невозможен: на складе недостаточно товара (часть зарезервирована)."),
+            _ => WarehouseResult.Fail("Не удалось выполнить откат.")
+        };
+    }
+
+    private string? PerformedBy => _currentUser.User?.DisplayName;
 }

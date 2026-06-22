@@ -1,19 +1,18 @@
 using Microsoft.EntityFrameworkCore;
 using StockFront.Contracts.Dashboard;
+using StockFront.Contracts.Warehouse;
 using StockFront.Data.Entities;
 
 namespace StockFront.Data.Repositories;
 
 /// <summary>
-/// Builds the warehouse dashboard read model from the database. All queries are read-only
-/// (<c>AsNoTracking</c>) and asynchronous.
+/// Builds the warehouse dashboard read model from the database. Availability is derived with the same
+/// <see cref="StockStatusCalculator"/> and <see cref="SalesDemand"/> the warehouse module uses, so the
+/// dashboard and the warehouse table never disagree. All queries are read-only (<c>AsNoTracking</c>)
+/// and asynchronous.
 /// </summary>
 public sealed class DashboardRepository : IDashboardRepository
 {
-    // At or below this many available units a product counts as "low". A temporary home for the
-    // threshold — it belongs to the Warehouse module once that exists.
-    private const int LowStockThreshold = 10;
-
     private readonly AppDbContext _db;
 
     public DashboardRepository(AppDbContext db) => _db = db;
@@ -29,9 +28,6 @@ public sealed class DashboardRepository : IDashboardRepository
         var activeOrders = await _db.Orders.AsNoTracking()
             .CountAsync(o => o.Status != OrderStatus.Completed && o.Status != OrderStatus.Cancelled, ct);
 
-        var lowStockCount = await _db.StockItems.AsNoTracking()
-            .CountAsync(s => s.Quantity - s.Reserved <= LowStockThreshold, ct);
-
         var monthRevenue = await _db.OrderLines.AsNoTracking()
             .Where(l => l.Order.CreatedAt >= monthStart
                         && (l.Order.Status == OrderStatus.Paid
@@ -39,26 +35,39 @@ public sealed class DashboardRepository : IDashboardRepository
                             || l.Order.Status == OrderStatus.Completed))
             .SumAsync(l => (decimal?)(l.Quantity * l.UnitPrice), ct) ?? 0m;
 
+        var demand = await SalesDemand.LoadAsync(_db, now, ct);
+
         var rows = await _db.Products.AsNoTracking()
             .OrderBy(p => p.Name)
             .Select(p => new
             {
+                p.Id,
                 p.Name,
                 p.Sku,
                 Quantity = p.Stock != null ? p.Stock.Quantity : 0,
-                Available = p.Stock != null ? p.Stock.Quantity - p.Stock.Reserved : 0
+                p.CreatedAt,
+                p.LeadTimeDays,
+                p.SafetyBufferDays,
+                p.IsSeasonal
             })
             .ToListAsync(ct);
 
         var products = rows
-            .Select(r => new DashboardProductRow(r.Name, r.Sku, r.Quantity, Classify(r.Available)))
+            .Select(r => new DashboardProductRow(r.Name, r.Sku, r.Quantity,
+                StockStatusCalculator.Classify(new StockStatusInputs(
+                    Quantity: r.Quantity,
+                    AvgDailySales: demand.AvgDailySales(r.Id),
+                    LastSale: demand.LastSale(r.Id),
+                    CreatedAt: r.CreatedAt,
+                    LeadTimeDays: r.LeadTimeDays,
+                    SafetyBufferDays: r.SafetyBufferDays,
+                    IsSeasonal: r.IsSeasonal,
+                    Now: now))))
             .ToList();
+
+        var lowStockCount = products.Count(p =>
+            p.Status is StockStatus.OutOfStock or StockStatus.Critical or StockStatus.Low);
 
         return new DashboardSnapshot(totalUnits, activeOrders, lowStockCount, monthRevenue, products);
     }
-
-    private static StockStatus Classify(int available) =>
-        available <= 0 ? StockStatus.OutOfStock
-        : available <= LowStockThreshold ? StockStatus.Low
-        : StockStatus.InStock;
 }

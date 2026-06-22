@@ -36,4 +36,14 @@ public interface IWarehouseRepository
     /// </summary>
     Task<bool> WriteOffAsync(
         int productId, int quantity, WriteOffReason reason, string? performedBy, CancellationToken ct = default);
+
+    /// <summary>The stock-movement journal (newest first), optionally filtered to one product.</summary>
+    Task<IReadOnlyList<StockMovementRow>> GetMovementsAsync(int? productId, CancellationToken ct = default);
+
+    /// <summary>
+    /// Append a compensating entry that undoes movement <paramref name="movementId"/> and adjust the
+    /// stock, in a single transaction. Never edits or deletes the original. The return value reports
+    /// whether (and why not) the reversal happened.
+    /// </summary>
+    Task<RevertOutcome> RevertMovementAsync(int movementId, string? performedBy, CancellationToken ct = default);
 }

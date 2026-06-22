@@ -31,4 +31,17 @@ public interface IWarehouseService
     /// </summary>
     Task<WarehouseResult> WriteOffAsync(
         int productId, int quantity, WriteOffReason reason, CancellationToken ct = default);
+
+    /// <summary>
+    /// The stock-movement journal (newest first), optionally filtered to one product. Each row already
+    /// knows whether the current user may revert it.
+    /// </summary>
+    Task<IReadOnlyList<StockMovementRow>> GetMovementsAsync(int? productId = null, CancellationToken ct = default);
+
+    /// <summary>
+    /// Revert a receipt or write-off by appending a compensating entry (the original is never changed
+    /// or deleted). Admin only; fails if the entry is itself a reversal, was already reverted, or the
+    /// reversal would push stock below what's reserved.
+    /// </summary>
+    Task<WarehouseResult> RevertMovementAsync(int movementId, CancellationToken ct = default);
 }
