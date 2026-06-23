@@ -9,6 +9,7 @@
         d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
         Title="StockFront — Складской учёт"
         Height="700" Width="1100"
+        MinHeight="600" MinWidth="980"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource WorkAreaBrush}"
         FontFamily="Segoe UI">
@@ -51,8 +52,13 @@
         <!-- Top bar -->
         <Border Grid.Row="0" Background="{StaticResource CardBrush}">
             <Grid Margin="20,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
                 <!-- Brand -->
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
                     <Border Background="{StaticResource AccentBrush}" Width="36" Height="36" CornerRadius="9">
                         <iconPacks:PackIconMaterial Kind="PackageVariantClosed" Foreground="White"
                                                     Width="18" Height="18"
@@ -67,7 +73,7 @@
                 </StackPanel>
 
                 <!-- Right: search stub + user -->
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                     <Border Background="{StaticResource WorkAreaBrush}" CornerRadius="18" Width="220" Height="36"
                             Margin="0,0,16,0" ToolTip="В разработке">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0">

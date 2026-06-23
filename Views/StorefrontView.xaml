@@ -267,7 +267,7 @@
 
                                     <!-- Add-to-cart / out-of-stock -->
                                     <Grid>
-                                        <Button Style="{StaticResource PrimaryButton}" Content="В корзину"
+                                        <Button Content="В корзину"
                                                 Command="{Binding DataContext.AddToCartCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                 CommandParameter="{Binding}">
                                             <Button.Style>
