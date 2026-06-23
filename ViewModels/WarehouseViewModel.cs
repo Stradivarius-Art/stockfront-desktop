@@ -36,7 +36,12 @@ public sealed partial class WarehouseViewModel : ObservableObject
     /// <summary>Source for the "existing product" pickers in both overlay forms.</summary>
     public ObservableCollection<WarehouseProductRow> AllProducts { get; } = new();
 
+    /// <summary>Status chips shown in a row (the fixed Days-of-Supply buckets).</summary>
     public ObservableCollection<string> Filters { get; } = new();
+
+    /// <summary>Category names for the rounded filter dropdown ("Все" + one per category in the data).</summary>
+    public ObservableCollection<string> CategoryFilters { get; } = new();
+
     public ObservableCollection<CategoryOption> Categories { get; } = new();
 
     /// <summary>Write-off reasons paired with their Russian labels for the dropdown.</summary>
@@ -54,8 +59,25 @@ public sealed partial class WarehouseViewModel : ObservableObject
     [ObservableProperty] private string _activeFilter = FilterAll;
     [ObservableProperty] private string _searchText = "";
 
-    partial void OnActiveFilterChanged(string value) => ApplyFilter();
+    partial void OnActiveFilterChanged(string value)
+    {
+        ApplyFilter();
+        // The dropdown shows the active category, or resets to "Все" when a status chip is picked.
+        OnPropertyChanged(nameof(SelectedCategoryFilter));
+    }
+
     partial void OnSearchTextChanged(string value) => ApplyFilter();
+
+    /// <summary>
+    /// Two-way proxy over <see cref="ActiveFilter"/> for the category dropdown: reads back as "Все"
+    /// whenever a status chip (not a category) is the active filter, so status and category stay
+    /// mutually exclusive on one shared filter.
+    /// </summary>
+    public string SelectedCategoryFilter
+    {
+        get => CategoryFilters.Contains(ActiveFilter) ? ActiveFilter : FilterAll;
+        set => ActiveFilter = value;
+    }
 
     [RelayCommand]
     public async Task LoadAsync()
@@ -90,7 +112,7 @@ public sealed partial class WarehouseViewModel : ObservableObject
     [RelayCommand]
     private void SetFilter(string filter) => ActiveFilter = filter;
 
-    // Chips: the three built-ins, then one per category present in the data.
+    // Status buckets stay as chips; categories move into the dropdown so the row never overflows.
     private void RebuildFilters()
     {
         var categories = _all.Select(p => p.Category).Distinct().OrderBy(c => c);
@@ -102,11 +124,16 @@ public sealed partial class WarehouseViewModel : ObservableObject
         Filters.Add(FilterOut);
         Filters.Add(FilterOverstock);
         Filters.Add(FilterIlliquid);
-        foreach (var c in categories)
-            Filters.Add(c);
 
-        if (!Filters.Contains(ActiveFilter))
+        CategoryFilters.Clear();
+        CategoryFilters.Add(FilterAll);
+        foreach (var c in categories)
+            CategoryFilters.Add(c);
+
+        if (!Filters.Contains(ActiveFilter) && !CategoryFilters.Contains(ActiveFilter))
             ActiveFilter = FilterAll;
+
+        OnPropertyChanged(nameof(SelectedCategoryFilter));
     }
 
     private void ApplyFilter()

@@ -591,6 +591,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <ItemsControl Grid.Column="0"
                               ItemsSource="{Binding Filters}"
@@ -620,7 +621,23 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
-                <Border Grid.Column="1"
+                <!-- Category dropdown — scales to any number of categories without overflowing the row -->
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            Margin="12,0">
+                    <TextBlock Text="Категория"
+                               VerticalAlignment="Center"
+                               Margin="0,0,8,0"
+                               FontSize="13"
+                               Foreground="{StaticResource SecondaryTextBrush}"/>
+                    <ComboBox Style="{StaticResource InputCombo}"
+                              Width="200"
+                              ItemsSource="{Binding CategoryFilters}"
+                              SelectedItem="{Binding SelectedCategoryFilter, Mode=TwoWay}"/>
+                </StackPanel>
+
+                <Border Grid.Column="2"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
                         Background="White"
