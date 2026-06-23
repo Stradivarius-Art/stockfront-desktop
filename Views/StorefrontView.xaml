@@ -1,0 +1,480 @@
+<UserControl x:Class="stockfront.Views.StorefrontView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:stockfront.ViewModels"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=vm:StorefrontViewModel}"
+             FontFamily="Segoe UI">
+
+    <UserControl.Resources>
+        <!-- Orange filled action button -->
+        <Style x:Key="PrimaryButton"
+               TargetType="Button">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bg" CornerRadius="12" Padding="22,0"
+                                Background="{StaticResource AccentBrush}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="{StaticResource AccentHoverBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bg" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Outline (secondary) button -->
+        <Style x:Key="SecondaryButton"
+               TargetType="Button">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="{StaticResource HeadingBrush}"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bg" CornerRadius="12" Padding="22,0"
+                                Background="White"
+                                BorderBrush="{StaticResource DividerBrush}"
+                                BorderThickness="1">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="{StaticResource WorkAreaBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bg" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Filter chip -->
+        <Style x:Key="FilterChip"
+               TargetType="RadioButton">
+            <Setter Property="Margin" Value="0,0,8,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="Bg" CornerRadius="16" Padding="16,7"
+                                Background="White"
+                                BorderBrush="{StaticResource DividerBrush}"
+                                BorderThickness="1">
+                            <TextBlock x:Name="Txt" Text="{TemplateBinding Content}"
+                                       FontSize="13"
+                                       Foreground="{StaticResource SecondaryTextBrush}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="{StaticResource WorkAreaBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="{StaticResource ActiveNavBrush}"/>
+                                <Setter TargetName="Bg" Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+                                <Setter TargetName="Txt" Property="Foreground" Value="{StaticResource AccentBrush}"/>
+                                <Setter TargetName="Txt" Property="FontWeight" Value="SemiBold"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Form field label -->
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource SecondaryTextBrush}"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Margin" Value="0,12,0,5"/>
+        </Style>
+
+        <!-- Rounded text input -->
+        <Style x:Key="InputBox" TargetType="TextBox">
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="{StaticResource DividerBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border CornerRadius="10"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}"
+                                          VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Small round +/- stepper button -->
+        <Style x:Key="StepperButton" TargetType="Button">
+            <Setter Property="Width" Value="28"/>
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Foreground" Value="{StaticResource HeadingBrush}"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bg" CornerRadius="8" Background="{StaticResource WorkAreaBrush}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bg" Property="Background" Value="{StaticResource ActiveNavBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <!-- Root: content + modal overlays on top -->
+    <Grid>
+        <Grid Margin="32,28">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Heading + cart -->
+            <Grid Grid.Row="0" Margin="0,0,0,20">
+                <TextBlock Text="Витрина" FontSize="26" FontWeight="Bold"
+                           Foreground="{StaticResource HeadingBrush}" VerticalAlignment="Center"/>
+                <Button Style="{StaticResource PrimaryButton}" MinWidth="150"
+                        HorizontalAlignment="Right" VerticalAlignment="Center"
+                        Command="{Binding OpenCartCommand}">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <iconPacks:PackIconMaterial Kind="CartOutline" Width="16" Height="16" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding CartCount, StringFormat='Корзина · {0}'}"
+                                   Margin="10,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+
+            <!-- Category filters -->
+            <ItemsControl Grid.Row="1" ItemsSource="{Binding Filters}"
+                          HorizontalAlignment="Left" Margin="0,0,0,16">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <RadioButton Style="{StaticResource FilterChip}"
+                                     Content="{Binding}"
+                                     Command="{Binding DataContext.SetFilterCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                     CommandParameter="{Binding}">
+                            <RadioButton.IsChecked>
+                                <MultiBinding Converter="{StaticResource EqualityConverter}" Mode="OneWay">
+                                    <Binding/>
+                                    <Binding Path="DataContext.ActiveFilter"
+                                             RelativeSource="{RelativeSource AncestorType=ItemsControl}"/>
+                                </MultiBinding>
+                            </RadioButton.IsChecked>
+                        </RadioButton>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- Catalog cards -->
+            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto"
+                          Padding="0,0,8,0">
+                <ItemsControl ItemsSource="{Binding Products}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="{StaticResource CardBrush}" CornerRadius="16"
+                                    Width="252" Margin="0,0,16,16" Padding="16">
+                                <StackPanel>
+                                    <!-- Image placeholder + admin edit -->
+                                    <Grid>
+                                        <Border Background="{StaticResource WorkAreaBrush}" CornerRadius="12" Height="120">
+                                            <iconPacks:PackIconMaterial Kind="ViewGridOutline" Width="34" Height="34"
+                                                                        Foreground="{StaticResource AccentBrush}"
+                                                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,8,8,0"
+                                                Cursor="Hand" ToolTip="Редактировать карточку"
+                                                Command="{Binding DataContext.OpenEditCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding}"
+                                                Visibility="{Binding DataContext.CanEditCards, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="Bg" Background="White" CornerRadius="8"
+                                                            Width="30" Height="30">
+                                                        <iconPacks:PackIconMaterial Kind="Pencil" Width="14" Height="14"
+                                                                                    Foreground="{StaticResource SecondaryTextBrush}"
+                                                                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="Bg" Property="Background" Value="{StaticResource ActiveNavBrush}"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
+                                    </Grid>
+
+                                    <TextBlock Text="{Binding Name}" FontSize="15" FontWeight="SemiBold"
+                                               Foreground="{StaticResource HeadingBrush}"
+                                               TextTrimming="CharacterEllipsis" Margin="0,14,0,0"/>
+
+                                    <!-- Price + availability -->
+                                    <Grid Margin="0,8,0,12">
+                                        <TextBlock Text="{Binding Price, Converter={StaticResource MoneyToRubleConverter}}"
+                                                   FontSize="17" FontWeight="Bold"
+                                                   Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center"/>
+                                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="12"
+                                                   Text="{Binding Availability, Converter={StaticResource StorefrontAvailabilityConverter}, ConverterParameter=Label}"
+                                                   Foreground="{Binding Availability, Converter={StaticResource StorefrontAvailabilityConverter}, ConverterParameter=Foreground}"/>
+                                    </Grid>
+
+                                    <!-- Add-to-cart / out-of-stock -->
+                                    <Grid>
+                                        <Button Style="{StaticResource PrimaryButton}" Content="В корзину"
+                                                Command="{Binding DataContext.AddToCartCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                CommandParameter="{Binding}">
+                                            <Button.Style>
+                                                <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Availability}" Value="OutOfStock">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                        <Border CornerRadius="12" Height="42" Background="{StaticResource WorkAreaBrush}"
+                                                Visibility="Collapsed">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Availability}" Value="OutOfStock">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <TextBlock Text="Нет в наличии" FontSize="14" FontWeight="SemiBold"
+                                                       Foreground="{StaticResource SecondaryTextBrush}"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <TextBlock Grid.Row="2" Text="{Binding Error}"
+                       Foreground="{StaticResource ErrorBrush}"
+                       VerticalAlignment="Bottom" Margin="4"
+                       Visibility="{Binding Error, Converter={StaticResource NullToCollapsedConverter}}"/>
+        </Grid>
+
+        <!-- ── Cart overlay ──────────────────────────────────────────────── -->
+        <Border Background="#55000000"
+                Visibility="{Binding IsCartOpen, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Border Background="White" CornerRadius="16" Padding="28" Width="540" MaxHeight="600"
+                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="Корзина" FontSize="20" FontWeight="Bold"
+                               Foreground="{StaticResource HeadingBrush}"/>
+
+                    <!-- Empty state -->
+                    <TextBlock Grid.Row="1" Text="Корзина пуста" Margin="0,24"
+                               Foreground="{StaticResource SecondaryTextBrush}" FontSize="14"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Visibility="{Binding HasItems, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
+
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,12,0,0"
+                                  Visibility="{Binding HasItems, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <ItemsControl ItemsSource="{Binding Cart}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="{StaticResource DividerBrush}" BorderThickness="0,1,0,0" Padding="0,12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="90"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold"
+                                                           Foreground="{StaticResource HeadingBrush}"
+                                                           TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding UnitPrice, Converter={StaticResource MoneyToRubleConverter}}"
+                                                           FontSize="12" Foreground="{StaticResource SecondaryTextBrush}" Margin="0,2,0,0"/>
+                                            </StackPanel>
+
+                                            <!-- Quantity stepper -->
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0">
+                                                <Button Style="{StaticResource StepperButton}" Content="−"
+                                                        Command="{Binding DataContext.DecrementLineCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        CommandParameter="{Binding}"/>
+                                                <TextBlock Text="{Binding Quantity}" MinWidth="28" FontSize="14"
+                                                           TextAlignment="Center" VerticalAlignment="Center"
+                                                           Foreground="{StaticResource HeadingBrush}"/>
+                                                <Button Style="{StaticResource StepperButton}" Content="+"
+                                                        Command="{Binding DataContext.IncrementLineCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        CommandParameter="{Binding}"/>
+                                            </StackPanel>
+
+                                            <TextBlock Grid.Column="2" VerticalAlignment="Center" TextAlignment="Right"
+                                                       Text="{Binding LineTotal, Converter={StaticResource MoneyToRubleConverter}}"
+                                                       FontSize="14" FontWeight="SemiBold"
+                                                       Foreground="{StaticResource HeadingBrush}"/>
+
+                                            <Button Grid.Column="3" Cursor="Hand" Margin="10,0,0,0" VerticalAlignment="Center"
+                                                    ToolTip="Убрать"
+                                                    Command="{Binding DataContext.RemoveLineCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding}">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border x:Name="Bg" Width="28" Height="28" CornerRadius="8" Background="Transparent">
+                                                            <iconPacks:PackIconMaterial Kind="Close" Width="13" Height="13"
+                                                                                        Foreground="{StaticResource SecondaryTextBrush}"
+                                                                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter TargetName="Bg" Property="Background" Value="{StaticResource WorkAreaBrush}"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+
+                    <!-- Total -->
+                    <Grid Grid.Row="2" Margin="0,16,0,0"
+                          Visibility="{Binding HasItems, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <TextBlock Text="Итого" FontSize="15" Foreground="{StaticResource SecondaryTextBrush}"
+                                   VerticalAlignment="Center"/>
+                        <TextBlock HorizontalAlignment="Right" FontSize="20" FontWeight="Bold"
+                                   Foreground="{StaticResource AccentBrush}"
+                                   Text="{Binding CartTotal, Converter={StaticResource MoneyToRubleConverter}}"/>
+                    </Grid>
+
+                    <TextBlock Grid.Row="3" Text="{Binding CheckoutError}"
+                               Foreground="{StaticResource ErrorBrush}" FontSize="13" Margin="0,12,0,0"
+                               TextWrapping="Wrap"
+                               Visibility="{Binding CheckoutError, Converter={StaticResource NullToCollapsedConverter}}"/>
+
+                    <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+                        <Button Content="Продолжить покупки" Style="{StaticResource SecondaryButton}"
+                                MinWidth="180" Command="{Binding CloseCartCommand}" Margin="0,0,12,0"/>
+                        <Button Content="Оформить заказ" Style="{StaticResource PrimaryButton}"
+                                MinWidth="160" Command="{Binding CheckoutCommand}"
+                                IsEnabled="{Binding HasItems}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Border>
+
+        <!-- ── Order confirmation overlay ────────────────────────────────── -->
+        <Border Background="#55000000"
+                Visibility="{Binding IsConfirmationOpen, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Border Background="White" CornerRadius="16" Padding="32" Width="420"
+                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel HorizontalAlignment="Center">
+                    <Border Background="{StaticResource ActiveNavBrush}" Width="64" Height="64" CornerRadius="32">
+                        <iconPacks:PackIconMaterial Kind="CheckBold" Width="28" Height="28"
+                                                    Foreground="{StaticResource AccentBrush}"
+                                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <TextBlock Text="{Binding ConfirmationText}" Margin="0,18,0,0" FontSize="15"
+                               Foreground="{StaticResource HeadingBrush}" TextWrapping="Wrap"
+                               TextAlignment="Center" MaxWidth="320"/>
+                    <Button Content="Отлично" Style="{StaticResource PrimaryButton}" MinWidth="160" Margin="0,22,0,0"
+                            Command="{Binding CloseConfirmationCommand}"/>
+                </StackPanel>
+            </Border>
+        </Border>
+
+        <!-- ── Admin card editor overlay ─────────────────────────────────── -->
+        <Border Background="#55000000"
+                Visibility="{Binding IsEditOpen, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Border Background="White" CornerRadius="16" Padding="28" Width="440"
+                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel>
+                    <TextBlock Text="Редактирование карточки" FontSize="20" FontWeight="Bold"
+                               Foreground="{StaticResource HeadingBrush}"/>
+
+                    <TextBlock Text="Название" Style="{StaticResource FieldLabel}"/>
+                    <TextBox Style="{StaticResource InputBox}"
+                             Text="{Binding EditName, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock Text="Цена, ₽" Style="{StaticResource FieldLabel}"/>
+                    <TextBox Style="{StaticResource InputBox}"
+                             Text="{Binding EditPrice, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock Text="{Binding EditError}" Foreground="{StaticResource ErrorBrush}"
+                               FontSize="13" Margin="0,12,0,0" TextWrapping="Wrap"
+                               Visibility="{Binding EditError, Converter={StaticResource NullToCollapsedConverter}}"/>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+                        <Button Content="Отмена" Style="{StaticResource SecondaryButton}" MinWidth="110"
+                                Command="{Binding CancelEditCommand}" Margin="0,0,12,0"/>
+                        <Button Content="Сохранить" Style="{StaticResource PrimaryButton}" MinWidth="130"
+                                Command="{Binding SubmitEditCommand}"
+                                IsEnabled="{Binding EditBusy, Converter={StaticResource InverseBooleanConverter}}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Border>
+    </Grid>
+</UserControl>

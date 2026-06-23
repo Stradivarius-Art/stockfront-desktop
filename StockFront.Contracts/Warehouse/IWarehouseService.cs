@@ -19,6 +19,13 @@ public interface IWarehouseService
     Task<WarehouseResult> ReceiveAsync(int productId, int quantity, CancellationToken ct = default);
 
     /// <summary>
+    /// Edit a product's storefront card — its name and price. Nomenclature only; stock is untouched.
+    /// Used by the storefront's admin card editor. Fails if the product no longer exists.
+    /// </summary>
+    Task<WarehouseResult> UpdateProductCardAsync(
+        int productId, string name, decimal price, CancellationToken ct = default);
+
+    /// <summary>
     /// Register a brand-new product (nomenclature) and receive its first <paramref name="quantity"/>
     /// into stock. Fails if the SKU is already taken.
     /// </summary>

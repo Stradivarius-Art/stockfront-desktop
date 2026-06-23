@@ -15,14 +15,17 @@ public sealed partial class MainViewModel : ObservableObject
     private readonly IAuthService _auth;
     private readonly DashboardViewModel _dashboard;
     private readonly WarehouseViewModel _warehouse;
+    private readonly StorefrontViewModel _storefront;
 
     public MainViewModel(
-        ICurrentUser currentUser, IAuthService auth, DashboardViewModel dashboard, WarehouseViewModel warehouse)
+        ICurrentUser currentUser, IAuthService auth, DashboardViewModel dashboard,
+        WarehouseViewModel warehouse, StorefrontViewModel storefront)
     {
         _currentUser = currentUser;
         _auth = auth;
         _dashboard = dashboard;
         _warehouse = warehouse;
+        _storefront = storefront;
     }
 
     /// <summary>Raised after the user signs out, so the host can return to the login window.</summary>
@@ -108,6 +111,11 @@ public sealed partial class MainViewModel : ObservableObject
         {
             CurrentPage = _warehouse;
             await _warehouse.LoadAsync();
+        }
+        else if (section == "storefront")
+        {
+            CurrentPage = _storefront;
+            await _storefront.LoadAsync();
         }
         else
         {

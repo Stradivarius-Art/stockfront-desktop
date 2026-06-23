@@ -13,9 +13,11 @@
         <conv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
         <conv:EqualityConverter x:Key="EqualityConverter" />
         <conv:StockStatusConverter x:Key="StockStatusConverter" />
+        <conv:StorefrontAvailabilityConverter x:Key="StorefrontAvailabilityConverter" />
         <conv:DaysOfSupplyTooltipConverter x:Key="DaysOfSupplyTooltipConverter" />
         <!-- true → Visible, false → Collapsed. Used to gate sidebar items by the current user's role. -->
         <sys:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <conv:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" />
 
         <!-- StockFront palette (see CLAUDE.md): one orange accent on a warm neutral background. -->
         <Color x:Key="AccentColor">#E0632B</Color>
@@ -35,6 +37,9 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:WarehouseViewModel}">
             <views:WarehouseView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:StorefrontViewModel}">
+            <views:StorefrontView />
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:PlaceholderViewModel}">
             <views:PlaceholderView />

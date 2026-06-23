@@ -22,6 +22,9 @@ public interface IWarehouseRepository
     /// <summary>Add <paramref name="quantity"/> to a product's stock and journal the receipt.</summary>
     Task ReceiveAsync(int productId, int quantity, string? performedBy, CancellationToken ct = default);
 
+    /// <summary>Update a product's name and price. Returns <c>false</c> if the product was not found.</summary>
+    Task<bool> UpdateProductCardAsync(int productId, string name, decimal price, CancellationToken ct = default);
+
     /// <summary>
     /// Create a product together with its stock record (the first received quantity) and journal the
     /// receipt. Returns the new product id.

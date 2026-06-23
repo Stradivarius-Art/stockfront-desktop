@@ -54,6 +54,22 @@ public sealed class WarehouseService : IWarehouseService
         return WarehouseResult.Ok();
     }
 
+    public async Task<WarehouseResult> UpdateProductCardAsync(
+        int productId, string name, decimal price, CancellationToken ct = default)
+    {
+        name = name?.Trim() ?? "";
+
+        if (name.Length == 0)
+            return WarehouseResult.Fail("Укажите название товара.");
+        if (price < 0)
+            return WarehouseResult.Fail("Цена не может быть отрицательной.");
+
+        var ok = await _repo.UpdateProductCardAsync(productId, name, price, ct);
+        return ok
+            ? WarehouseResult.Ok()
+            : WarehouseResult.Fail("Товар не найден.");
+    }
+
     public async Task<WarehouseResult> ReceiveNewProductAsync(
         string sku, string name, int categoryId, decimal price, int quantity, CancellationToken ct = default)
     {

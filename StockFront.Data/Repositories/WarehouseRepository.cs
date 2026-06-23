@@ -61,6 +61,19 @@ public sealed class WarehouseRepository : IWarehouseRepository
     public Task<bool> SkuExistsAsync(string sku, CancellationToken ct = default) =>
         _db.Products.AsNoTracking().AnyAsync(p => p.Sku == sku, ct);
 
+    public async Task<bool> UpdateProductCardAsync(
+        int productId, string name, decimal price, CancellationToken ct = default)
+    {
+        var product = await _db.Products.FirstOrDefaultAsync(p => p.Id == productId, ct);
+        if (product is null)
+            return false;
+
+        product.Name = name;
+        product.Price = price;
+        await _db.SaveChangesAsync(ct);
+        return true;
+    }
+
     public async Task ReceiveAsync(int productId, int quantity, string? performedBy, CancellationToken ct = default)
     {
         var stock = await _db.StockItems.FirstOrDefaultAsync(s => s.ProductId == productId, ct)
@@ -148,12 +161,15 @@ public sealed class WarehouseRepository : IWarehouseRepository
             {
                 var isReversal = m.ReversesMovementId is not null;
                 var isReversed = revertedSet.Contains(m.Id);
+                // Only manual receipts and write-offs may be rolled back; sales belong to orders and
+                // reversals undo themselves.
+                var revertableType = m.Type is StockMovementType.Receipt or StockMovementType.WriteOff;
                 return new StockMovementRow(
                     m.Id, m.ProductId, m.ProductName, TypeLabel(m.Type), m.Quantity,
                     ReasonLabel(m.Reason), m.Comment, m.PerformedBy, m.CreatedAt,
                     m.ReversesMovementId, isReversal, isReversed,
                     // Role is applied in the service; here only the data-level eligibility.
-                    CanRevert: !isReversal && !isReversed);
+                    CanRevert: revertableType && !isReversed);
             })
             .ToList();
     }
@@ -168,7 +184,9 @@ public sealed class WarehouseRepository : IWarehouseRepository
             if (original is null)
                 return RevertOutcome.NotFound;
 
-            if (original.Type is StockMovementType.ReversalReceipt or StockMovementType.ReversalWriteOff)
+            // Only manual receipts and write-offs are revertable. Sales (order shipments) and reversal
+            // entries themselves are not.
+            if (original.Type is not (StockMovementType.Receipt or StockMovementType.WriteOff))
                 return RevertOutcome.CannotRevertReversal;
 
             if (await _db.StockMovements.AnyAsync(m => m.ReversesMovementId == movementId, ct))
@@ -227,6 +245,7 @@ public sealed class WarehouseRepository : IWarehouseRepository
     {
         StockMovementType.Receipt => "Приёмка",
         StockMovementType.WriteOff => "Списание",
+        StockMovementType.Sale => "Продажа",
         StockMovementType.ReversalReceipt => "Откат приёмки",
         StockMovementType.ReversalWriteOff => "Откат списания",
         _ => type.ToString()

@@ -13,11 +13,11 @@
   <!-- The sibling projects live in subfolders; keep their sources out of the WPF app's glob
        (we reference them as projects instead). -->
   <ItemGroup>
-    <Compile Remove="StockFront.Data/**/*.cs;StockFront.Contracts/**/*.cs;StockFront.Auth/**/*.cs;StockFront.Warehouse/**/*.cs" />
-    <None Remove="StockFront.Data/**;StockFront.Contracts/**;StockFront.Auth/**;StockFront.Warehouse/**" />
-    <EmbeddedResource Remove="StockFront.Data/**;StockFront.Contracts/**;StockFront.Auth/**;StockFront.Warehouse/**" />
-    <Page Remove="StockFront.Data/**;StockFront.Contracts/**;StockFront.Auth/**;StockFront.Warehouse/**" />
-    <Resource Remove="StockFront.Data/**;StockFront.Contracts/**;StockFront.Auth/**;StockFront.Warehouse/**" />
+    <Compile Remove="StockFront.Data/**/*.cs;StockFront.Contracts/**/*.cs;StockFront.Auth/**/*.cs;StockFront.Warehouse/**/*.cs;StockFront.Storefront/**/*.cs;StockFront.Orders/**/*.cs" />
+    <None Remove="StockFront.Data/**;StockFront.Contracts/**;StockFront.Auth/**;StockFront.Warehouse/**;StockFront.Storefront/**;StockFront.Orders/**" />
+    <EmbeddedResource Remove="StockFront.Data/**;StockFront.Contracts/**;StockFront.Auth/**;StockFront.Warehouse/**;StockFront.Storefront/**;StockFront.Orders/**" />
+    <Page Remove="StockFront.Data/**;StockFront.Contracts/**;StockFront.Auth/**;StockFront.Warehouse/**;StockFront.Storefront/**;StockFront.Orders/**" />
+    <Resource Remove="StockFront.Data/**;StockFront.Contracts/**;StockFront.Auth/**;StockFront.Warehouse/**;StockFront.Storefront/**;StockFront.Orders/**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,6 +31,8 @@
     <ProjectReference Include="StockFront.Auth/StockFront.Auth.csproj" />
     <ProjectReference Include="StockFront.Data/StockFront.Data.csproj" />
     <ProjectReference Include="StockFront.Warehouse/StockFront.Warehouse.csproj" />
+    <ProjectReference Include="StockFront.Storefront/StockFront.Storefront.csproj" />
+    <ProjectReference Include="StockFront.Orders/StockFront.Orders.csproj" />
   </ItemGroup>
 
 </Project>

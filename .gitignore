@@ -11,3 +11,6 @@ obj/
 CLAUDE.md
 .claude
 design/errors
+
+# Optional test payment integration (YooKassa sandbox) — kept out of source control
+payments/

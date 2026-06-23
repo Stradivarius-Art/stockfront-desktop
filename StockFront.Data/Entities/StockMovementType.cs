@@ -9,6 +9,9 @@ public enum StockMovementType
     /// <summary>Списание — quantity removed from stock (negative quantity).</summary>
     WriteOff,
 
+    /// <summary>Продажа — quantity shipped to a customer order (negative quantity).</summary>
+    Sale,
+
     /// <summary>Откат приёмки — compensating entry that undoes a receipt (negative quantity).</summary>
     ReversalReceipt,
 
