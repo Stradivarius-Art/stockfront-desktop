@@ -237,7 +237,7 @@ public sealed partial class WarehouseViewModel : ObservableObject
                 }
                 if (!TryParsePrice(ReceiveNewPrice, out var price))
                 {
-                    ReceiveError = "Введите цену — число не меньше нуля.";
+                    ReceiveError = $"Введите цену — число от 0 до {MaxPrice:N0} ₽.";
                     return;
                 }
 
@@ -376,7 +376,7 @@ public sealed partial class WarehouseViewModel : ObservableObject
         }
         if (!TryParsePrice(EditProductPrice, out var price))
         {
-            EditProductError = "Введите цену — число не меньше нуля.";
+            EditProductError = $"Введите цену — число от 0 до {MaxPrice:N0} ₽.";
             return;
         }
         if (EditProductCategory is null)
@@ -496,13 +496,17 @@ public sealed partial class WarehouseViewModel : ObservableObject
         await LoadAsync();
     }
 
+    /// <summary>Upper bound for a product price. Keeps absurd values out and stays well within the
+    /// <c>decimal(12,2)</c> column, so a too-large price is rejected in the form, not at the database.</summary>
+    private const decimal MaxPrice = 10_000_000m;
+
     private static bool TryParseQuantity(string text, out int quantity) =>
         int.TryParse(text?.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out quantity)
         && quantity > 0;
 
     private static bool TryParsePrice(string text, out decimal price) =>
         decimal.TryParse(text?.Trim().Replace(',', '.'), NumberStyles.Number, CultureInfo.InvariantCulture, out price)
-        && price >= 0;
+        && price >= 0 && price <= MaxPrice;
 }
 
 /// <summary>A write-off reason with its display label, for the reason dropdown.</summary>

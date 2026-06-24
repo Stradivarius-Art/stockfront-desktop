@@ -21,6 +21,12 @@ public static class DatabaseBootstrapper
     private const string DefaultAdminPassword = "admin123";
     private const string DefaultAdminDisplayName = "Администратор";
 
+    // Default warehouse keeper, seeded on demand alongside the admin. Like the admin password, change
+    // it after the first sign-in. Idempotent by e-mail: re-running does nothing once it exists.
+    private const string DefaultKeeperEmail = "keeper@stockfront.local";
+    private const string DefaultKeeperPassword = "keeper123";
+    private const string DefaultKeeperDisplayName = "Кладовщик";
+
     /// <summary>Bring the schema up to date by applying any pending EF Core migrations.</summary>
     public static async Task MigrateAsync(IServiceProvider services, CancellationToken ct = default)
     {
@@ -50,6 +56,31 @@ public static class DatabaseBootstrapper
             Debug.WriteLine($"Seeded default admin '{DefaultAdminEmail}' — change this password.");
         else
             throw new InvalidOperationException($"Failed to seed default admin: {result.Error}");
+    }
+
+    /// <summary>
+    /// Create the default warehouse keeper if (and only if) that e-mail is not already taken.
+    /// Idempotent: safe to re-run, and unlike the admin it doesn't require an empty users table, so it
+    /// can be added next to an existing admin.
+    /// </summary>
+    public static async Task SeedKeeperAsync(IServiceProvider services, CancellationToken ct = default)
+    {
+        var users = services.GetRequiredService<IUserRepository>();
+        if (await users.EmailExistsAsync(DefaultKeeperEmail, ct))
+        {
+            Debug.WriteLine("Keeper account already exists — not seeded.");
+            return;
+        }
+
+        var auth = services.GetRequiredService<IAuthService>();
+        var result = await auth.RegisterAsync(
+            DefaultKeeperEmail, DefaultKeeperPassword, DefaultKeeperDisplayName,
+            role: UserRole.WarehouseKeeper, ct: ct);
+
+        if (result.Succeeded)
+            Debug.WriteLine($"Seeded default keeper '{DefaultKeeperEmail}' — change this password.");
+        else
+            throw new InvalidOperationException($"Failed to seed default keeper: {result.Error}");
     }
 
     /// <summary>Fill the database with illustrative demo data (idempotent — see TestDataSeeder).</summary>

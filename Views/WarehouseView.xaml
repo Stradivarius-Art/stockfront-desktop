@@ -4,6 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:stockfront.ViewModels"
+             xmlns:conv="clr-namespace:stockfront.Converters"
              xmlns:behaviors="clr-namespace:stockfront.Behaviors"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d"
@@ -11,6 +12,11 @@
              FontFamily="Segoe UI">
 
     <UserControl.Resources>
+        <!-- Carries the ViewModel into a resource so the (visual-tree-less) ColumnDefinitions can
+             reach CanEditProducts to size the admin-only actions column. -->
+        <conv:BindingProxy x:Key="VmProxy"
+                           Data="{Binding}"/>
+
         <Style x:Key="ColHeader"
                TargetType="TextBlock">
             <Setter Property="Foreground"
@@ -628,7 +634,8 @@
                             <ColumnDefinition Width="80"/>
                             <ColumnDefinition Width="90"/>
                             <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="88"/>
+                            <!-- Actions column: 88px for admins, collapsed (0) for other roles -->
+                            <ColumnDefinition Width="{Binding Data.CanEditProducts, Source={StaticResource VmProxy}, Converter={StaticResource BoolToGridLengthConverter}, ConverterParameter=88}"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0"
                                    Text="Товар"
@@ -667,7 +674,8 @@
                                                 <ColumnDefinition Width="80"/>
                                                 <ColumnDefinition Width="90"/>
                                                 <ColumnDefinition Width="100"/>
-                                                <ColumnDefinition Width="88"/>
+                                                <!-- Actions column: 88px for admins, collapsed (0) for other roles -->
+                                                <ColumnDefinition Width="{Binding Data.CanEditProducts, Source={StaticResource VmProxy}, Converter={StaticResource BoolToGridLengthConverter}, ConverterParameter=88}"/>
                                             </Grid.ColumnDefinitions>
 
                                             <TextBlock Grid.Column="0"
@@ -703,11 +711,13 @@
                                                            Foreground="{Binding Status, Converter={StaticResource StockStatusConverter}, ConverterParameter=Foreground}"/>
                                             </Border>
 
-                                            <!-- Row actions (admin only): edit always; delete only when stock is 0 -->
+                                            <!-- Row actions (admin only): edit always; delete only when stock is 0.
+                                                 Right margin keeps the buttons clear of the table's scrollbar. -->
                                             <StackPanel Grid.Column="6"
                                                         Orientation="Horizontal"
                                                         HorizontalAlignment="Right"
                                                         VerticalAlignment="Center"
+                                                        Margin="0,0,14,0"
                                                         Visibility="{Binding DataContext.CanEditProducts, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolToVisibilityConverter}}">
                                                 <Button Cursor="Hand"
                                                         ToolTip="Редактировать товар"

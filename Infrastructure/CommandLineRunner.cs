@@ -5,7 +5,7 @@ namespace stockfront.Infrastructure;
 
 /// <summary>
 /// Handles database-maintenance commands passed on the command line, e.g.
-/// <c>dotnet run --project stockfront.csproj -- --migrate --seed-admin --seed</c>.
+/// <c>dotnet run --project stockfront.csproj -- --migrate --seed-admin --seed-keeper --seed</c>.
 /// These run instead of the GUI: the app does the requested work, prints the result to the
 /// terminal, and exits. If no known flag is present, <see cref="TryRunAsync"/> returns
 /// <c>false</c> and the app starts normally without touching the database.
@@ -14,6 +14,7 @@ public static class CommandLineRunner
 {
     private const string MigrateFlag = "--migrate";
     private const string SeedAdminFlag = "--seed-admin";
+    private const string SeedKeeperFlag = "--seed-keeper";
     private const string SeedFlag = "--seed";
 
     /// <summary>
@@ -25,14 +26,15 @@ public static class CommandLineRunner
     {
         var migrate = args.Contains(MigrateFlag);
         var seedAdmin = args.Contains(SeedAdminFlag);
+        var seedKeeper = args.Contains(SeedKeeperFlag);
         var seed = args.Contains(SeedFlag);
 
-        if (!migrate && !seedAdmin && !seed)
+        if (!migrate && !seedAdmin && !seedKeeper && !seed)
             return false;
 
         AttachConsole();
 
-        // Fixed order regardless of how the flags were passed: schema → admin → demo data.
+        // Fixed order regardless of how the flags were passed: schema → admin → keeper → demo data.
         if (migrate)
         {
             Write("Применение миграций…");
@@ -45,6 +47,13 @@ public static class CommandLineRunner
             Write("Создание администратора по умолчанию…");
             await DatabaseBootstrapper.SeedAdminAsync(services);
             Write("Готово (если таблица пользователей была пуста).");
+        }
+
+        if (seedKeeper)
+        {
+            Write("Создание кладовщика по умолчанию…");
+            await DatabaseBootstrapper.SeedKeeperAsync(services);
+            Write("Готово (если такого аккаунта ещё не было).");
         }
 
         if (seed)

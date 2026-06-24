@@ -71,6 +71,13 @@ public static class StockStatusCalculator
         if (daysOfSupply < reorderPoint) return StockStatus.Critical;
         if (daysOfSupply < LowUpperDays) return StockStatus.Low;
         if (daysOfSupply <= NormalUpperDays) return StockStatus.Normal;
+
+        // A high days-of-supply driven by tiny demand isn't "overstock" when only a handful of units
+        // are on hand — you can't have excess capital frozen in, say, 5 pieces. The upper bands
+        // ("Выше нормы" / "Избыток") require holding more than the reorder point; otherwise it's just
+        // adequately stocked (Норма).
+        if (x.Quantity <= reorderPoint) return StockStatus.Normal;
+
         if (daysOfSupply <= AboveNormalUpperDays) return StockStatus.AboveNormal;
         return StockStatus.Overstock;
     }

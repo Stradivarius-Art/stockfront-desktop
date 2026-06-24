@@ -70,8 +70,6 @@ public sealed partial class MainViewModel : ObservableObject
     public bool ShowWarehouse => CanAccess("warehouse");
     public bool ShowStorefront => CanAccess("storefront");
     public bool ShowOrders => CanAccess("orders");
-    public bool ShowReports => CanAccess("reports");
-    public bool ShowUsers => CanAccess("users");
 
     /// <summary>
     /// Role gate for a section. Enforced here, not only hidden in XAML (see the stockfront-auth
@@ -81,7 +79,7 @@ public sealed partial class MainViewModel : ObservableObject
     {
         UserRole.Admin => true,
         UserRole.WarehouseKeeper =>
-            section is "dashboard" or "warehouse" or "orders" or "reports" or "profile",
+            section is "dashboard" or "warehouse" or "orders" or "profile",
         UserRole.Customer =>
             section is "storefront" or "orders" or "profile",
         _ => false
@@ -143,14 +141,6 @@ public sealed partial class MainViewModel : ObservableObject
                 ("Заказы", "Заказы в статусе «Оплачен» — перевод в «Отгружен»."),
             ("orders", _) =>
                 ("Заказы", "Только свои заказы (просмотр)."),
-
-            ("reports", UserRole.Admin) =>
-                ("Отчёты", "Полная аналитика продаж и остатков."),
-            ("reports", _) =>
-                ("Отчёты", "Движение товара."),
-
-            ("users", _) =>
-                ("Пользователи", "Управление ролями и блокировка аккаунтов."),
 
             ("profile", _) =>
                 ("Профиль", "Личные данные и смена пароля."),

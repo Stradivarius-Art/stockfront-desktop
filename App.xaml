@@ -20,6 +20,7 @@
         <!-- true → Visible, false → Collapsed. Used to gate sidebar items by the current user's role. -->
         <sys:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <conv:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" />
+        <conv:BoolToGridLengthConverter x:Key="BoolToGridLengthConverter" />
 
         <!-- StockFront palette (see CLAUDE.md): one orange accent on a warm neutral background. -->
         <Color x:Key="AccentColor">#E0632B</Color>

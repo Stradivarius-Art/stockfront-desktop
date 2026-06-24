@@ -157,24 +157,6 @@
                             <TextBlock Text="Заказы" Margin="14,0,0,0" VerticalAlignment="Center" />
                         </StackPanel>
                     </RadioButton>
-                    <RadioButton Style="{StaticResource NavItem}" GroupName="nav"
-                                 Visibility="{Binding ShowReports, Converter={StaticResource BoolToVisibilityConverter}}"
-                                 IsChecked="{Binding CurrentSection, Converter={StaticResource StringEqualsConverter}, ConverterParameter=reports, Mode=OneWay}"
-                                 Command="{Binding NavigateCommand}" CommandParameter="reports">
-                        <StackPanel Orientation="Horizontal">
-                            <iconPacks:PackIconMaterial Kind="ChartBar" Width="18" Height="18" VerticalAlignment="Center" />
-                            <TextBlock Text="Отчёты" Margin="14,0,0,0" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </RadioButton>
-                    <RadioButton Style="{StaticResource NavItem}" GroupName="nav"
-                                 Visibility="{Binding ShowUsers, Converter={StaticResource BoolToVisibilityConverter}}"
-                                 IsChecked="{Binding CurrentSection, Converter={StaticResource StringEqualsConverter}, ConverterParameter=users, Mode=OneWay}"
-                                 Command="{Binding NavigateCommand}" CommandParameter="users">
-                        <StackPanel Orientation="Horizontal">
-                            <iconPacks:PackIconMaterial Kind="AccountGroupOutline" Width="18" Height="18" VerticalAlignment="Center" />
-                            <TextBlock Text="Пользователи" Margin="14,0,0,0" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </RadioButton>
                 </StackPanel>
             </Border>
 
