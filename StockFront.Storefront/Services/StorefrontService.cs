@@ -22,16 +22,17 @@ public sealed class StorefrontService : IStorefrontService
         var products = await _warehouse.GetProductsAsync(ct);
         return products
             .Select(p => new CatalogProductRow(
-                p.Id, p.Sku, p.Name, p.Category, p.Price, p.Available, ToAvailability(p)))
+                p.Id, p.Sku, p.Name, p.Category, p.Price, p.Available, ToAvailability(p),
+                p.Description, p.ImagePath))
             .ToList();
     }
 
     public Task<IReadOnlyList<CategoryOption>> GetCategoriesAsync(CancellationToken ct = default) =>
         _warehouse.GetCategoriesAsync(ct);
 
-    public Task<WarehouseResult> UpdateProductCardAsync(
-        int productId, string name, decimal price, CancellationToken ct = default) =>
-        _warehouse.UpdateProductCardAsync(productId, name, price, ct);
+    public Task<WarehouseResult> UpdateProductPresentationAsync(
+        int productId, string? imagePath, string? description, CancellationToken ct = default) =>
+        _warehouse.UpdateProductPresentationAsync(productId, imagePath, description, ct);
 
     /// <summary>
     /// Collapse the warehouse's nine-status traffic light into the storefront's three steps: nothing to

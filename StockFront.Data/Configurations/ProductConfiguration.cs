@@ -18,6 +18,14 @@ public sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
          .IsRequired()
          .HasMaxLength(200);
 
+        // Storefront presentation fields (optional). Description is long-ish free text; ImagePath is a
+        // short relative file name into the local image store.
+        b.Property(x => x.Description)
+         .HasMaxLength(2000);
+
+        b.Property(x => x.ImagePath)
+         .HasMaxLength(512);
+
         b.Property(x => x.Price)
          .HasColumnType("decimal(12,2)");
 

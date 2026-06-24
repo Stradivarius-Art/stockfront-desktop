@@ -17,9 +17,9 @@ public interface IStorefrontService
     Task<IReadOnlyList<CategoryOption>> GetCategoriesAsync(CancellationToken ct = default);
 
     /// <summary>
-    /// Admin-only: edit a product card's name and price (the storefront-facing nomenclature). Stock is
-    /// not touched. Validation lives here; the change is persisted through the warehouse repository.
+    /// Admin-only: edit a product card's presentation — its image and description. Stock, name and price
+    /// are not touched (those belong to the warehouse). The change is persisted through the warehouse.
     /// </summary>
-    Task<WarehouseResult> UpdateProductCardAsync(
-        int productId, string name, decimal price, CancellationToken ct = default);
+    Task<WarehouseResult> UpdateProductPresentationAsync(
+        int productId, string? imagePath, string? description, CancellationToken ct = default);
 }

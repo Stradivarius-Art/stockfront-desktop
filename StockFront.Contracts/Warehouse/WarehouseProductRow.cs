@@ -18,4 +18,6 @@ public sealed record WarehouseProductRow(
     decimal Price,
     StockStatus Status,
     double AvgDailySales,
-    double? DaysOfSupply);
+    double? DaysOfSupply,
+    string? Description = null,
+    string? ImagePath = null);

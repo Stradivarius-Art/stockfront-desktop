@@ -132,6 +132,16 @@ namespace StockFront.Data.Migrations
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP(6)");
 
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("varchar(2000)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("ImagePath")
+                        .HasMaxLength(512)
+                        .HasColumnType("varchar(512)")
+                        .HasColumnName("image_path");
+
                     b.Property<bool>("IsSeasonal")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")

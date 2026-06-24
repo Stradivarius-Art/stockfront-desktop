@@ -15,6 +15,8 @@
         <conv:StockStatusConverter x:Key="StockStatusConverter" />
         <conv:StorefrontAvailabilityConverter x:Key="StorefrontAvailabilityConverter" />
         <conv:DaysOfSupplyTooltipConverter x:Key="DaysOfSupplyTooltipConverter" />
+        <conv:ImageSourceConverter x:Key="ImageSourceConverter" />
+        <conv:ZeroToVisibleConverter x:Key="ZeroToVisibleConverter" />
         <!-- true → Visible, false → Collapsed. Used to gate sidebar items by the current user's role. -->
         <sys:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <conv:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter" />

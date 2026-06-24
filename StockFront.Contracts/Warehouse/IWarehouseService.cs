@@ -19,11 +19,18 @@ public interface IWarehouseService
     Task<WarehouseResult> ReceiveAsync(int productId, int quantity, CancellationToken ct = default);
 
     /// <summary>
-    /// Edit a product's storefront card — its name and price. Nomenclature only; stock is untouched.
-    /// Used by the storefront's admin card editor. Fails if the product no longer exists.
+    /// Edit a product's warehouse details — its name, price and category. Nomenclature only; stock is
+    /// untouched. Used by the warehouse product editor. Fails if the product no longer exists.
     /// </summary>
-    Task<WarehouseResult> UpdateProductCardAsync(
-        int productId, string name, decimal price, CancellationToken ct = default);
+    Task<WarehouseResult> UpdateProductDetailsAsync(
+        int productId, string name, decimal price, int categoryId, CancellationToken ct = default);
+
+    /// <summary>
+    /// Edit a product's storefront presentation — its image and description. Used by the storefront's
+    /// admin card editor; stock, name and price are untouched. Fails if the product no longer exists.
+    /// </summary>
+    Task<WarehouseResult> UpdateProductPresentationAsync(
+        int productId, string? imagePath, string? description, CancellationToken ct = default);
 
     /// <summary>
     /// Register a brand-new product (nomenclature) and receive its first <paramref name="quantity"/>
@@ -38,6 +45,12 @@ public interface IWarehouseService
     /// </summary>
     Task<WarehouseResult> WriteOffAsync(
         int productId, int quantity, WriteOffReason reason, CancellationToken ct = default);
+
+    /// <summary>
+    /// Delete an empty product (stock 0) together with its stock record and journal. Admin only; fails
+    /// if the product still holds stock or is referenced by existing orders.
+    /// </summary>
+    Task<WarehouseResult> DeleteProductAsync(int productId, CancellationToken ct = default);
 
     /// <summary>
     /// The stock-movement journal (newest first), optionally filtered to one product. Each row already

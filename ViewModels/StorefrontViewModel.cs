@@ -1,10 +1,10 @@
 using System.Collections.ObjectModel;
-using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using StockFront.Contracts.Auth;
 using StockFront.Contracts.Orders;
 using StockFront.Contracts.Storefront;
+using stockfront.Infrastructure;
 
 namespace stockfront.ViewModels;
 
@@ -17,6 +17,9 @@ namespace stockfront.ViewModels;
 public sealed partial class StorefrontViewModel : ObservableObject
 {
     private const string FilterAll = "Все";
+
+    // At or below this many cards the centred grid looks lost, so the catalog switches to a list.
+    private const int ListThreshold = 4;
 
     private readonly IStorefrontService _storefront;
     private readonly IOrderService _orders;
@@ -38,6 +41,13 @@ public sealed partial class StorefrontViewModel : ObservableObject
 
     /// <summary>Admins may edit product cards in place; hidden for everyone else (see CLAUDE.md matrix).</summary>
     public bool CanEditCards => _currentUser.IsInRole(UserRole.Admin);
+
+    /// <summary>Customers don't see out-of-stock goods at all; staff/admin still see the full catalog.</summary>
+    private bool HideOutOfStock => _currentUser.IsInRole(UserRole.Customer);
+
+    /// <summary>With only a few products a list reads better than a sparse centred grid of cards.</summary>
+    public bool IsListView => Products.Count is > 0 and <= ListThreshold;
+    public bool IsGridView => !IsListView;
 
     [ObservableProperty] private bool _isLoading;
     [ObservableProperty] private string? _error;
@@ -92,12 +102,17 @@ public sealed partial class StorefrontViewModel : ObservableObject
     private void ApplyFilter()
     {
         IEnumerable<CatalogProductRow> rows = _all;
+        if (HideOutOfStock)
+            rows = rows.Where(p => p.Availability != StorefrontAvailability.OutOfStock);
         if (ActiveFilter != FilterAll)
             rows = rows.Where(p => p.Category == ActiveFilter);
 
         Products.Clear();
         foreach (var row in rows)
             Products.Add(row);
+
+        OnPropertyChanged(nameof(IsListView));
+        OnPropertyChanged(nameof(IsGridView));
     }
 
     // ── Cart ───────────────────────────────────────────────────────────────────────
@@ -117,8 +132,40 @@ public sealed partial class StorefrontViewModel : ObservableObject
         {
             line.Quantity++;
         }
+        else
+        {
+            // Already at the stock cap — tell the user instead of silently doing nothing.
+            _ = ShowToastAsync($"«{product.Name}»: больше нет в наличии");
+            return;
+        }
 
         RecalcCart();
+        _ = ShowToastAsync($"«{product.Name}» добавлен в корзину");
+    }
+
+    // ── "Added to cart" toast ───────────────────────────────────────────────────────
+
+    [ObservableProperty] private bool _isToastVisible;
+    [ObservableProperty] private string _toastText = "";
+    private CancellationTokenSource? _toastCts;
+
+    /// <summary>Show a brief auto-dismissing toast; a new message resets the timer.</summary>
+    private async Task ShowToastAsync(string text)
+    {
+        ToastText = text;
+        IsToastVisible = true;
+
+        _toastCts?.Cancel();
+        var cts = _toastCts = new CancellationTokenSource();
+        try
+        {
+            await Task.Delay(2200, cts.Token);
+            IsToastVisible = false;
+        }
+        catch (OperationCanceledException)
+        {
+            // Superseded by a newer toast; the later call owns the visibility.
+        }
     }
 
     [RelayCommand]
@@ -252,14 +299,19 @@ public sealed partial class StorefrontViewModel : ObservableObject
     [RelayCommand]
     private void CloseConfirmation() => IsConfirmationOpen = false;
 
-    // ── Admin card editor ───────────────────────────────────────────────────────────
+    // ── Admin card editor (storefront presentation: image + description) ──────────────
 
     [ObservableProperty] private bool _isEditOpen;
     [ObservableProperty] private CatalogProductRow? _editProduct;
-    [ObservableProperty] private string _editName = "";
-    [ObservableProperty] private string _editPrice = "";
+    [ObservableProperty] private string _editProductName = "";
+    [ObservableProperty] private string? _editImagePath;
+    [ObservableProperty] private string _editDescription = "";
     [ObservableProperty] private string? _editError;
     [ObservableProperty] private bool _editBusy;
+
+    /// <summary>True once an image has been chosen — drives the preview vs. placeholder in the editor.</summary>
+    public bool HasEditImage => !string.IsNullOrWhiteSpace(EditImagePath);
+    partial void OnEditImagePathChanged(string? value) => OnPropertyChanged(nameof(HasEditImage));
 
     [RelayCommand]
     private void OpenEdit(CatalogProductRow? product)
@@ -268,11 +320,38 @@ public sealed partial class StorefrontViewModel : ObservableObject
             return;
 
         EditProduct = product;
-        EditName = product.Name;
-        EditPrice = product.Price.ToString("0.##", CultureInfo.InvariantCulture);
+        EditProductName = product.Name;
+        EditImagePath = product.ImagePath;
+        EditDescription = product.Description ?? "";
         EditError = null;
         IsEditOpen = true;
     }
+
+    /// <summary>Pick an image file and copy it into the local image store; keep only its stored name.</summary>
+    [RelayCommand]
+    private void PickImage()
+    {
+        var dialog = new Microsoft.Win32.OpenFileDialog
+        {
+            Title = "Выберите изображение товара",
+            Filter = "Изображения|*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.webp|Все файлы|*.*"
+        };
+        if (dialog.ShowDialog() != true)
+            return;
+
+        try
+        {
+            EditImagePath = ImageStore.Save(dialog.FileName);
+            EditError = null;
+        }
+        catch (Exception ex)
+        {
+            EditError = $"Не удалось загрузить изображение: {ex.Message}";
+        }
+    }
+
+    [RelayCommand]
+    private void ClearImage() => EditImagePath = null;
 
     [RelayCommand]
     private void CancelEdit() => IsEditOpen = false;
@@ -284,21 +363,12 @@ public sealed partial class StorefrontViewModel : ObservableObject
 
         if (EditProduct is null)
             return;
-        if (string.IsNullOrWhiteSpace(EditName))
-        {
-            EditError = "Укажите название товара.";
-            return;
-        }
-        if (!TryParsePrice(EditPrice, out var price))
-        {
-            EditError = "Введите цену — число не меньше нуля.";
-            return;
-        }
 
         EditBusy = true;
         try
         {
-            var result = await _storefront.UpdateProductCardAsync(EditProduct.Id, EditName, price);
+            var result = await _storefront.UpdateProductPresentationAsync(
+                EditProduct.Id, EditImagePath, EditDescription);
             if (!result.Succeeded)
             {
                 EditError = result.Error;
@@ -313,10 +383,6 @@ public sealed partial class StorefrontViewModel : ObservableObject
             EditBusy = false;
         }
     }
-
-    private static bool TryParsePrice(string text, out decimal price) =>
-        decimal.TryParse(text?.Trim().Replace(',', '.'), NumberStyles.Number, CultureInfo.InvariantCulture, out price)
-        && price >= 0;
 }
 
 /// <summary>One line of the shopping cart: a product, its unit price and the chosen quantity (capped at

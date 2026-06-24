@@ -42,6 +42,14 @@ public partial class RegisterView : Window
         Close();
     }
 
+    // The space bar would otherwise enter a space into the password — disallowed by CredentialRules,
+    // so block it at the source (the field also rejects other whitespace/non-ASCII on validation).
+    private void PasswordBox_BlockWhitespace(object sender, KeyEventArgs e)
+    {
+        if (e.Key is Key.Space)
+            e.Handled = true;
+    }
+
     private void PasswordBox_OnPasswordChanged(object sender, RoutedEventArgs e) =>
         _viewModel.Password = ((PasswordBox)sender).Password;
 

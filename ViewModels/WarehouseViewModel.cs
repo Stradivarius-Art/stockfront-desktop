@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using StockFront.Contracts.Auth;
 using StockFront.Contracts.Dashboard;
 using StockFront.Contracts.Warehouse;
 
@@ -25,18 +26,26 @@ public sealed partial class WarehouseViewModel : ObservableObject
     private const string FilterIlliquid = "Неликвид";
 
     private readonly IWarehouseService _warehouse;
+    private readonly ICurrentUser _currentUser;
 
     // The full, unfiltered list; Products is the filtered view shown in the table.
     private IReadOnlyList<WarehouseProductRow> _all = Array.Empty<WarehouseProductRow>();
 
-    public WarehouseViewModel(IWarehouseService warehouse) => _warehouse = warehouse;
+    public WarehouseViewModel(IWarehouseService warehouse, ICurrentUser currentUser)
+    {
+        _warehouse = warehouse;
+        _currentUser = currentUser;
+    }
+
+    /// <summary>Editing a product's nomenclature (name/price/category) is admin-only (see CLAUDE.md matrix).</summary>
+    public bool CanEditProducts => _currentUser.IsInRole(UserRole.Admin);
 
     public ObservableCollection<WarehouseProductRow> Products { get; } = new();
 
     /// <summary>Source for the "existing product" pickers in both overlay forms.</summary>
     public ObservableCollection<WarehouseProductRow> AllProducts { get; } = new();
 
-    /// <summary>Status chips shown in a row (the fixed Days-of-Supply buckets).</summary>
+    /// <summary>Status options for the "Статус" dropdown (the fixed Days-of-Supply buckets).</summary>
     public ObservableCollection<string> Filters { get; } = new();
 
     /// <summary>Category names for the rounded filter dropdown ("Все" + one per category in the data).</summary>
@@ -62,20 +71,31 @@ public sealed partial class WarehouseViewModel : ObservableObject
     partial void OnActiveFilterChanged(string value)
     {
         ApplyFilter();
-        // The dropdown shows the active category, or resets to "Все" when a status chip is picked.
+        // Status and category share one filter, so when one dropdown changes the other reads back "Все".
         OnPropertyChanged(nameof(SelectedCategoryFilter));
+        OnPropertyChanged(nameof(SelectedStatusFilter));
     }
 
     partial void OnSearchTextChanged(string value) => ApplyFilter();
 
     /// <summary>
     /// Two-way proxy over <see cref="ActiveFilter"/> for the category dropdown: reads back as "Все"
-    /// whenever a status chip (not a category) is the active filter, so status and category stay
-    /// mutually exclusive on one shared filter.
+    /// whenever a status (not a category) is the active filter, so status and category stay mutually
+    /// exclusive on one shared filter.
     /// </summary>
     public string SelectedCategoryFilter
     {
         get => CategoryFilters.Contains(ActiveFilter) ? ActiveFilter : FilterAll;
+        set => ActiveFilter = value;
+    }
+
+    /// <summary>
+    /// Two-way proxy over <see cref="ActiveFilter"/> for the status dropdown — the counterpart of
+    /// <see cref="SelectedCategoryFilter"/>; reads back "Все" whenever a category is active.
+    /// </summary>
+    public string SelectedStatusFilter
+    {
+        get => Filters.Contains(ActiveFilter) ? ActiveFilter : FilterAll;
         set => ActiveFilter = value;
     }
 
@@ -112,7 +132,7 @@ public sealed partial class WarehouseViewModel : ObservableObject
     [RelayCommand]
     private void SetFilter(string filter) => ActiveFilter = filter;
 
-    // Status buckets stay as chips; categories move into the dropdown so the row never overflows.
+    // Status buckets and categories each get their own dropdown so the filter row never overflows.
     private void RebuildFilters()
     {
         var categories = _all.Select(p => p.Category).Distinct().OrderBy(c => c);
@@ -134,6 +154,7 @@ public sealed partial class WarehouseViewModel : ObservableObject
             ActiveFilter = FilterAll;
 
         OnPropertyChanged(nameof(SelectedCategoryFilter));
+        OnPropertyChanged(nameof(SelectedStatusFilter));
     }
 
     private void ApplyFilter()
@@ -310,6 +331,123 @@ public sealed partial class WarehouseViewModel : ObservableObject
         finally
         {
             WriteOffBusy = false;
+        }
+    }
+
+    // ── Editing a product (nomenclature: name, price, category) ─────────────────────
+
+    [ObservableProperty] private bool _isEditProductOpen;
+    [ObservableProperty] private WarehouseProductRow? _editProductTarget;
+    [ObservableProperty] private string _editProductName = "";
+    [ObservableProperty] private string _editProductPrice = "";
+    [ObservableProperty] private CategoryOption? _editProductCategory;
+    [ObservableProperty] private string? _editProductError;
+    [ObservableProperty] private bool _editProductBusy;
+
+    [RelayCommand]
+    private void OpenEditProduct(WarehouseProductRow? product)
+    {
+        if (product is null || !CanEditProducts)
+            return;
+
+        EditProductTarget = product;
+        EditProductName = product.Name;
+        EditProductPrice = product.Price.ToString("0.##", CultureInfo.InvariantCulture);
+        // Preselect the product's current category by name (the row carries the name, not the id).
+        EditProductCategory = Categories.FirstOrDefault(c => c.Name == product.Category);
+        EditProductError = null;
+        IsEditProductOpen = true;
+    }
+
+    [RelayCommand]
+    private void CancelEditProduct() => IsEditProductOpen = false;
+
+    [RelayCommand]
+    private async Task SubmitEditProductAsync()
+    {
+        EditProductError = null;
+
+        if (EditProductTarget is null)
+            return;
+        if (string.IsNullOrWhiteSpace(EditProductName))
+        {
+            EditProductError = "Укажите название товара.";
+            return;
+        }
+        if (!TryParsePrice(EditProductPrice, out var price))
+        {
+            EditProductError = "Введите цену — число не меньше нуля.";
+            return;
+        }
+        if (EditProductCategory is null)
+        {
+            EditProductError = "Выберите категорию.";
+            return;
+        }
+
+        EditProductBusy = true;
+        try
+        {
+            var result = await _warehouse.UpdateProductDetailsAsync(
+                EditProductTarget.Id, EditProductName, price, EditProductCategory.Id);
+            if (!result.Succeeded)
+            {
+                EditProductError = result.Error;
+                return;
+            }
+
+            IsEditProductOpen = false;
+            await LoadAsync();
+        }
+        finally
+        {
+            EditProductBusy = false;
+        }
+    }
+
+    // ── Deleting a product (admin only; offered only when stock is 0) ───────────────
+
+    [ObservableProperty] private bool _isDeleteConfirmOpen;
+    [ObservableProperty] private WarehouseProductRow? _deleteTarget;
+    [ObservableProperty] private string? _deleteError;
+    [ObservableProperty] private bool _deleteBusy;
+
+    [RelayCommand]
+    private void RequestDeleteProduct(WarehouseProductRow? product)
+    {
+        if (product is null || !CanEditProducts)
+            return;
+
+        DeleteTarget = product;
+        DeleteError = null;
+        IsDeleteConfirmOpen = true;
+    }
+
+    [RelayCommand]
+    private void CancelDeleteProduct() => IsDeleteConfirmOpen = false;
+
+    [RelayCommand]
+    private async Task ConfirmDeleteProductAsync()
+    {
+        if (DeleteTarget is null)
+            return;
+
+        DeleteBusy = true;
+        try
+        {
+            var result = await _warehouse.DeleteProductAsync(DeleteTarget.Id);
+            if (!result.Succeeded)
+            {
+                DeleteError = result.Error;
+                return;
+            }
+
+            IsDeleteConfirmOpen = false;
+            await LoadAsync();
+        }
+        finally
+        {
+            DeleteBusy = false;
         }
     }
 

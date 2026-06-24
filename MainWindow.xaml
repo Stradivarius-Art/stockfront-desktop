@@ -72,24 +72,8 @@
                     </StackPanel>
                 </StackPanel>
 
-                <!-- Right: search stub + user -->
+                <!-- Right: signed-in user -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <Border Background="{StaticResource WorkAreaBrush}" CornerRadius="18" Width="220" Height="36"
-                            Margin="0,0,16,0" ToolTip="В разработке">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0">
-                            <iconPacks:PackIconMaterial Kind="Magnify" Width="15" Height="15"
-                                                        Foreground="{StaticResource SecondaryTextBrush}"
-                                                        VerticalAlignment="Center" />
-                            <TextBlock Text="поиск товара" Foreground="{StaticResource SecondaryTextBrush}"
-                                       FontSize="13" VerticalAlignment="Center" Margin="8,0,0,0" />
-                        </StackPanel>
-                    </Border>
-
-                    <iconPacks:PackIconMaterial Kind="BellOutline" Width="20" Height="20"
-                                                Foreground="{StaticResource SecondaryTextBrush}"
-                                                VerticalAlignment="Center" Margin="0,0,16,0"
-                                                ToolTip="В разработке" />
-
                     <StackPanel VerticalAlignment="Center" Margin="0,0,12,0">
                         <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" FontSize="14"
                                    HorizontalAlignment="Right" Foreground="{StaticResource HeadingBrush}" />

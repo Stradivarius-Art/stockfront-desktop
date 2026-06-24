@@ -96,7 +96,8 @@
                     </Grid.ColumnDefinitions>
                     <PasswordBox x:Name="PasswordBox" Grid.Column="0" Height="42" Padding="14,0"
                                  VerticalContentAlignment="Center" FontSize="14" BorderThickness="0"
-                                 Background="Transparent" PasswordChanged="PasswordBox_OnPasswordChanged" />
+                                 Background="Transparent" PasswordChanged="PasswordBox_OnPasswordChanged"
+                                 PreviewKeyDown="PasswordBox_BlockWhitespace" />
                     <TextBox x:Name="PasswordTextBox" Grid.Column="0" Height="42" Padding="14,0"
                              VerticalContentAlignment="Center" FontSize="14" BorderThickness="0"
                              Background="Transparent" IsReadOnly="True" Focusable="False" Visibility="Collapsed" />
@@ -120,7 +121,8 @@
                     </Grid.ColumnDefinitions>
                     <PasswordBox x:Name="ConfirmPasswordBox" Grid.Column="0" Height="42" Padding="14,0"
                                  VerticalContentAlignment="Center" FontSize="14" BorderThickness="0"
-                                 Background="Transparent" PasswordChanged="ConfirmPasswordBox_OnPasswordChanged" />
+                                 Background="Transparent" PasswordChanged="ConfirmPasswordBox_OnPasswordChanged"
+                                 PreviewKeyDown="PasswordBox_BlockWhitespace" />
                     <TextBox x:Name="ConfirmPasswordTextBox" Grid.Column="0" Height="42" Padding="14,0"
                              VerticalContentAlignment="Center" FontSize="14" BorderThickness="0"
                              Background="Transparent" IsReadOnly="True" Focusable="False" Visibility="Collapsed" />

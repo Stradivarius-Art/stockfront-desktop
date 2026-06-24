@@ -118,55 +118,6 @@
             </Setter>
         </Style>
 
-        <!-- Filter chip -->
-        <Style x:Key="FilterChip"
-               TargetType="RadioButton">
-            <Setter Property="Margin"
-                    Value="0,0,8,0"/>
-            <Setter Property="Cursor"
-                    Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="RadioButton">
-                        <Border x:Name="Bg"
-                                CornerRadius="16"
-                                Padding="16,7"
-                                Background="White"
-                                BorderBrush="{StaticResource DividerBrush}"
-                                BorderThickness="1">
-                            <TextBlock x:Name="Txt"
-                                       Text="{TemplateBinding Content}"
-                                       FontSize="13"
-                                       Foreground="{StaticResource SecondaryTextBrush}"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver"
-                                     Value="True">
-                                <Setter TargetName="Bg"
-                                        Property="Background"
-                                        Value="{StaticResource WorkAreaBrush}"/>
-                            </Trigger>
-                            <Trigger Property="IsChecked"
-                                     Value="True">
-                                <Setter TargetName="Bg"
-                                        Property="Background"
-                                        Value="{StaticResource ActiveNavBrush}"/>
-                                <Setter TargetName="Bg"
-                                        Property="BorderBrush"
-                                        Value="{StaticResource AccentBrush}"/>
-                                <Setter TargetName="Txt"
-                                        Property="Foreground"
-                                        Value="{StaticResource AccentBrush}"/>
-                                <Setter TargetName="Txt"
-                                        Property="FontWeight"
-                                        Value="SemiBold"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
         <!-- Form field label -->
         <Style x:Key="FieldLabel"
                TargetType="TextBlock">
@@ -593,33 +544,21 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <ItemsControl Grid.Column="0"
+                <!-- Status dropdown — the Days-of-Supply buckets, formerly a row of chips -->
+                <StackPanel Grid.Column="0"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Left">
+                    <TextBlock Text="Статус"
+                               VerticalAlignment="Center"
+                               Margin="0,0,8,0"
+                               FontSize="13"
+                               Foreground="{StaticResource SecondaryTextBrush}"/>
+                    <ComboBox Style="{StaticResource InputCombo}"
+                              Width="180"
                               ItemsSource="{Binding Filters}"
-                              VerticalAlignment="Center"
-                              HorizontalAlignment="Left">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <RadioButton Style="{StaticResource FilterChip}"
-                                         Content="{Binding}"
-                                         Command="{Binding DataContext.SetFilterCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                         CommandParameter="{Binding}">
-                                <RadioButton.IsChecked>
-                                    <MultiBinding Converter="{StaticResource EqualityConverter}"
-                                                  Mode="OneWay">
-                                        <Binding/>
-                                        <Binding Path="DataContext.ActiveFilter"
-                                                 RelativeSource="{RelativeSource AncestorType=ItemsControl}"/>
-                                    </MultiBinding>
-                                </RadioButton.IsChecked>
-                            </RadioButton>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                              SelectedItem="{Binding SelectedStatusFilter, Mode=TwoWay}"/>
+                </StackPanel>
 
                 <!-- Category dropdown — scales to any number of categories without overflowing the row -->
                 <StackPanel Grid.Column="1"
@@ -689,6 +628,7 @@
                             <ColumnDefinition Width="80"/>
                             <ColumnDefinition Width="90"/>
                             <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="88"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0"
                                    Text="Товар"
@@ -727,6 +667,7 @@
                                                 <ColumnDefinition Width="80"/>
                                                 <ColumnDefinition Width="90"/>
                                                 <ColumnDefinition Width="100"/>
+                                                <ColumnDefinition Width="88"/>
                                             </Grid.ColumnDefinitions>
 
                                             <TextBlock Grid.Column="0"
@@ -761,6 +702,71 @@
                                                            Text="{Binding Status, Converter={StaticResource StockStatusConverter}, ConverterParameter=Label}"
                                                            Foreground="{Binding Status, Converter={StaticResource StockStatusConverter}, ConverterParameter=Foreground}"/>
                                             </Border>
+
+                                            <!-- Row actions (admin only): edit always; delete only when stock is 0 -->
+                                            <StackPanel Grid.Column="6"
+                                                        Orientation="Horizontal"
+                                                        HorizontalAlignment="Right"
+                                                        VerticalAlignment="Center"
+                                                        Visibility="{Binding DataContext.CanEditProducts, RelativeSource={RelativeSource AncestorType=ItemsControl}, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                <Button Cursor="Hand"
+                                                        ToolTip="Редактировать товар"
+                                                        Command="{Binding DataContext.OpenEditProductCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        CommandParameter="{Binding}">
+                                                    <Button.Template>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border x:Name="Bg"
+                                                                    Width="32"
+                                                                    Height="32"
+                                                                    CornerRadius="8"
+                                                                    Background="{StaticResource WorkAreaBrush}">
+                                                                <iconPacks:PackIconMaterial Kind="Pencil"
+                                                                                            Width="14"
+                                                                                            Height="14"
+                                                                                            Foreground="{StaticResource SecondaryTextBrush}"
+                                                                                            HorizontalAlignment="Center"
+                                                                                            VerticalAlignment="Center"/>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter TargetName="Bg" Property="Background" Value="{StaticResource ActiveNavBrush}"/>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Button.Template>
+                                                </Button>
+
+                                                <!-- Delete — shown only for an empty (0 stock) product -->
+                                                <Button Cursor="Hand"
+                                                        Margin="8,0,0,0"
+                                                        ToolTip="Удалить товар"
+                                                        Command="{Binding DataContext.RequestDeleteProductCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        CommandParameter="{Binding}"
+                                                        Visibility="{Binding Quantity, Converter={StaticResource ZeroToVisibleConverter}}">
+                                                    <Button.Template>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border x:Name="Bg"
+                                                                    Width="32"
+                                                                    Height="32"
+                                                                    CornerRadius="8"
+                                                                    Background="{StaticResource WorkAreaBrush}">
+                                                                <iconPacks:PackIconMaterial Kind="TrashCanOutline"
+                                                                                            Width="15"
+                                                                                            Height="15"
+                                                                                            Foreground="{StaticResource SecondaryTextBrush}"
+                                                                                            HorizontalAlignment="Center"
+                                                                                            VerticalAlignment="Center"/>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter TargetName="Bg" Property="Background" Value="#F8D7D7"/>
+                                                                    <Setter TargetName="Bg" Property="Opacity" Value="1"/>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Button.Template>
+                                                </Button>
+                                            </StackPanel>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
@@ -950,6 +956,109 @@
                                 MinWidth="130"
                                 Command="{Binding SubmitWriteOffCommand}"
                                 IsEnabled="{Binding WriteOffBusy, Converter={StaticResource InverseBooleanConverter}}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Border>
+
+        <!-- ── Edit product overlay (name / price / category) ──────────────── -->
+        <Border Background="#55000000"
+                Visibility="{Binding IsEditProductOpen, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Border Background="White"
+                    CornerRadius="16"
+                    Padding="28"
+                    Width="440"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                <StackPanel>
+                    <TextBlock Text="Редактирование товара"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               Foreground="{StaticResource HeadingBrush}"/>
+
+                    <TextBlock Text="Название"
+                               Style="{StaticResource FieldLabel}"/>
+                    <TextBox Style="{StaticResource InputBox}"
+                             Text="{Binding EditProductName, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock Text="Цена, ₽"
+                               Style="{StaticResource FieldLabel}"/>
+                    <TextBox Style="{StaticResource InputBox}"
+                             Text="{Binding EditProductPrice, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock Text="Категория"
+                               Style="{StaticResource FieldLabel}"/>
+                    <ComboBox Style="{StaticResource InputCombo}"
+                              ItemsSource="{Binding Categories}"
+                              ItemTemplate="{StaticResource ComboItemName}"
+                              SelectedItem="{Binding EditProductCategory}"/>
+
+                    <TextBlock Text="{Binding EditProductError}"
+                               Foreground="{StaticResource ErrorBrush}"
+                               FontSize="13"
+                               Margin="0,12,0,0"
+                               TextWrapping="Wrap"
+                               Visibility="{Binding EditProductError, Converter={StaticResource NullToCollapsedConverter}}"/>
+
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                Margin="0,20,0,0">
+                        <Button Content="Отмена"
+                                Style="{StaticResource SecondaryButton}"
+                                MinWidth="110"
+                                Command="{Binding CancelEditProductCommand}"
+                                Margin="0,0,12,0"/>
+                        <Button Content="Сохранить"
+                                Style="{StaticResource PrimaryButton}"
+                                MinWidth="130"
+                                Command="{Binding SubmitEditProductCommand}"
+                                IsEnabled="{Binding EditProductBusy, Converter={StaticResource InverseBooleanConverter}}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Border>
+
+        <!-- ── Delete product confirmation ─────────────────────────────────── -->
+        <Border Background="#55000000"
+                Visibility="{Binding IsDeleteConfirmOpen, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Border Background="White"
+                    CornerRadius="16"
+                    Padding="28"
+                    Width="420"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                <StackPanel>
+                    <TextBlock Text="Удалить товар?"
+                               FontSize="20"
+                               FontWeight="Bold"
+                               Foreground="{StaticResource HeadingBrush}"/>
+                    <TextBlock Margin="0,12,0,0"
+                               TextWrapping="Wrap"
+                               FontSize="14"
+                               Foreground="{StaticResource SecondaryTextBrush}">
+                        <Run Text="«"/><Run Text="{Binding DeleteTarget.Name}"/><Run Text="» будет удалён вместе с историей операций. Действие необратимо."/>
+                    </TextBlock>
+
+                    <TextBlock Text="{Binding DeleteError}"
+                               Foreground="{StaticResource ErrorBrush}"
+                               FontSize="13"
+                               Margin="0,12,0,0"
+                               TextWrapping="Wrap"
+                               Visibility="{Binding DeleteError, Converter={StaticResource NullToCollapsedConverter}}"/>
+
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                Margin="0,20,0,0">
+                        <Button Content="Отмена"
+                                Style="{StaticResource SecondaryButton}"
+                                MinWidth="110"
+                                Command="{Binding CancelDeleteProductCommand}"
+                                Margin="0,0,12,0"/>
+                        <Button Content="Удалить"
+                                Style="{StaticResource PrimaryButton}"
+                                MinWidth="130"
+                                Command="{Binding ConfirmDeleteProductCommand}"
+                                IsEnabled="{Binding DeleteBusy, Converter={StaticResource InverseBooleanConverter}}"/>
                     </StackPanel>
                 </StackPanel>
             </Border>

@@ -22,8 +22,18 @@ public interface IWarehouseRepository
     /// <summary>Add <paramref name="quantity"/> to a product's stock and journal the receipt.</summary>
     Task ReceiveAsync(int productId, int quantity, string? performedBy, CancellationToken ct = default);
 
-    /// <summary>Update a product's name and price. Returns <c>false</c> if the product was not found.</summary>
-    Task<bool> UpdateProductCardAsync(int productId, string name, decimal price, CancellationToken ct = default);
+    /// <summary>
+    /// Update a product's name, price and category. Returns <c>false</c> if the product was not found.
+    /// </summary>
+    Task<bool> UpdateProductDetailsAsync(
+        int productId, string name, decimal price, int categoryId, CancellationToken ct = default);
+
+    /// <summary>
+    /// Update a product's storefront presentation (image path and description). Returns <c>false</c> if
+    /// the product was not found.
+    /// </summary>
+    Task<bool> UpdateProductPresentationAsync(
+        int productId, string? imagePath, string? description, CancellationToken ct = default);
 
     /// <summary>
     /// Create a product together with its stock record (the first received quantity) and journal the
@@ -39,6 +49,13 @@ public interface IWarehouseRepository
     /// </summary>
     Task<bool> WriteOffAsync(
         int productId, int quantity, WriteOffReason reason, string? performedBy, CancellationToken ct = default);
+
+    /// <summary>
+    /// Delete an empty product together with its stock record and movement journal, in one transaction.
+    /// Refuses (without changes) if the product still has stock or is referenced by order lines. The
+    /// outcome says whether — and why not — it happened.
+    /// </summary>
+    Task<DeleteProductOutcome> DeleteProductAsync(int productId, CancellationToken ct = default);
 
     /// <summary>The stock-movement journal (newest first), optionally filtered to one product.</summary>
     Task<IReadOnlyList<StockMovementRow>> GetMovementsAsync(int? productId, CancellationToken ct = default);

@@ -37,7 +37,8 @@ public sealed class WarehouseService : IWarehouseService
                 return new WarehouseProductRow(
                     r.Id, r.Sku, r.Name, r.Category, r.Quantity, r.Reserved, available, r.Price,
                     status, r.AvgDailySales,
-                    StockStatusCalculator.DaysOfSupply(r.Quantity, r.AvgDailySales));
+                    StockStatusCalculator.DaysOfSupply(r.Quantity, r.AvgDailySales),
+                    r.Description, r.ImagePath);
             })
             .ToList();
     }
@@ -54,8 +55,8 @@ public sealed class WarehouseService : IWarehouseService
         return WarehouseResult.Ok();
     }
 
-    public async Task<WarehouseResult> UpdateProductCardAsync(
-        int productId, string name, decimal price, CancellationToken ct = default)
+    public async Task<WarehouseResult> UpdateProductDetailsAsync(
+        int productId, string name, decimal price, int categoryId, CancellationToken ct = default)
     {
         name = name?.Trim() ?? "";
 
@@ -63,8 +64,23 @@ public sealed class WarehouseService : IWarehouseService
             return WarehouseResult.Fail("Укажите название товара.");
         if (price < 0)
             return WarehouseResult.Fail("Цена не может быть отрицательной.");
+        if (categoryId <= 0)
+            return WarehouseResult.Fail("Выберите категорию.");
 
-        var ok = await _repo.UpdateProductCardAsync(productId, name, price, ct);
+        var ok = await _repo.UpdateProductDetailsAsync(productId, name, price, categoryId, ct);
+        return ok
+            ? WarehouseResult.Ok()
+            : WarehouseResult.Fail("Товар не найден.");
+    }
+
+    public async Task<WarehouseResult> UpdateProductPresentationAsync(
+        int productId, string? imagePath, string? description, CancellationToken ct = default)
+    {
+        // Presentation text/image are optional; normalise empty input to null so the column stays clean.
+        imagePath = string.IsNullOrWhiteSpace(imagePath) ? null : imagePath.Trim();
+        description = string.IsNullOrWhiteSpace(description) ? null : description.Trim();
+
+        var ok = await _repo.UpdateProductPresentationAsync(productId, imagePath, description, ct);
         return ok
             ? WarehouseResult.Ok()
             : WarehouseResult.Fail("Товар не найден.");
@@ -104,6 +120,24 @@ public sealed class WarehouseService : IWarehouseService
         return ok
             ? WarehouseResult.Ok()
             : WarehouseResult.Fail("Недостаточно товара на складе для списания.");
+    }
+
+    public async Task<WarehouseResult> DeleteProductAsync(int productId, CancellationToken ct = default)
+    {
+        if (!_currentUser.IsInRole(UserRole.Admin))
+            return WarehouseResult.Fail("Удаление товаров доступно только администратору.");
+
+        var outcome = await _repo.DeleteProductAsync(productId, ct);
+        return outcome switch
+        {
+            DeleteProductOutcome.Success => WarehouseResult.Ok(),
+            DeleteProductOutcome.NotFound => WarehouseResult.Fail("Товар не найден."),
+            DeleteProductOutcome.HasStock =>
+                WarehouseResult.Fail("Удалить можно только товар с нулевым остатком."),
+            DeleteProductOutcome.InUse =>
+                WarehouseResult.Fail("Товар присутствует в заказах — удалить нельзя."),
+            _ => WarehouseResult.Fail("Не удалось удалить товар.")
+        };
     }
 
     public async Task<IReadOnlyList<StockMovementRow>> GetMovementsAsync(

@@ -12,4 +12,6 @@ public sealed record CatalogProductRow(
     string Category,
     decimal Price,
     int Available,
-    StorefrontAvailability Availability);
+    StorefrontAvailability Availability,
+    string? Description = null,
+    string? ImagePath = null);

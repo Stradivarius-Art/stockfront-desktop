@@ -26,6 +26,16 @@ public static class CredentialRules
         if (password.Length > PasswordMaxLength)
             return $"Пароль не длиннее {PasswordMaxLength} символов.";
 
+        // Only printable ASCII (Latin letters, digits, punctuation) — no spaces/whitespace and no
+        // non-ASCII (e.g. Cyrillic), so the password is portable across keyboards and login forms.
+        foreach (var ch in password)
+        {
+            if (char.IsWhiteSpace(ch))
+                return "Пароль не должен содержать пробелы.";
+            if (ch < '!' || ch > '~')
+                return "Пароль может содержать только латинские буквы, цифры и спецсимволы.";
+        }
+
         return null;
     }
 

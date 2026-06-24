@@ -37,7 +37,9 @@ public sealed class WarehouseRepository : IWarehouseRepository
                 p.CreatedAt,
                 p.LeadTimeDays,
                 p.SafetyBufferDays,
-                p.IsSeasonal
+                p.IsSeasonal,
+                p.Description,
+                p.ImagePath
             })
             .ToListAsync(ct);
 
@@ -46,7 +48,9 @@ public sealed class WarehouseRepository : IWarehouseRepository
                 p.Id, p.Sku, p.Name, p.Category, p.Quantity, p.Reserved, p.Price,
                 p.CreatedAt, p.LeadTimeDays, p.SafetyBufferDays, p.IsSeasonal,
                 AvgDailySales: demand.AvgDailySales(p.Id),
-                LastSale: demand.LastSale(p.Id)))
+                LastSale: demand.LastSale(p.Id),
+                Description: p.Description,
+                ImagePath: p.ImagePath))
             .ToList();
     }
 
@@ -61,8 +65,8 @@ public sealed class WarehouseRepository : IWarehouseRepository
     public Task<bool> SkuExistsAsync(string sku, CancellationToken ct = default) =>
         _db.Products.AsNoTracking().AnyAsync(p => p.Sku == sku, ct);
 
-    public async Task<bool> UpdateProductCardAsync(
-        int productId, string name, decimal price, CancellationToken ct = default)
+    public async Task<bool> UpdateProductDetailsAsync(
+        int productId, string name, decimal price, int categoryId, CancellationToken ct = default)
     {
         var product = await _db.Products.FirstOrDefaultAsync(p => p.Id == productId, ct);
         if (product is null)
@@ -70,6 +74,20 @@ public sealed class WarehouseRepository : IWarehouseRepository
 
         product.Name = name;
         product.Price = price;
+        product.CategoryId = categoryId;
+        await _db.SaveChangesAsync(ct);
+        return true;
+    }
+
+    public async Task<bool> UpdateProductPresentationAsync(
+        int productId, string? imagePath, string? description, CancellationToken ct = default)
+    {
+        var product = await _db.Products.FirstOrDefaultAsync(p => p.Id == productId, ct);
+        if (product is null)
+            return false;
+
+        product.ImagePath = imagePath;
+        product.Description = description;
         await _db.SaveChangesAsync(ct);
         return true;
     }
@@ -125,6 +143,45 @@ public sealed class WarehouseRepository : IWarehouseRepository
         return true;
     }
 
+    public async Task<DeleteProductOutcome> DeleteProductAsync(int productId, CancellationToken ct = default)
+    {
+        await using var tx = await _db.Database.BeginTransactionAsync(ct);
+        try
+        {
+            var product = await _db.Products.Include(p => p.Stock)
+                .FirstOrDefaultAsync(p => p.Id == productId, ct);
+            if (product is null)
+                return DeleteProductOutcome.NotFound;
+
+            // Only empty products are removable — never delete something still holding (or reserving) stock.
+            if (product.Stock is { } stock && (stock.Quantity != 0 || stock.Reserved != 0))
+                return DeleteProductOutcome.HasStock;
+
+            // Real order history must be preserved (order lines reference the product with Restrict).
+            if (await _db.OrderLines.AnyAsync(ol => ol.ProductId == productId, ct))
+                return DeleteProductOutcome.InUse;
+
+            // The product's own journal goes with it. Break the reversal self-references first (all within
+            // this product's movements) so the bulk delete doesn't trip the Restrict self-FK.
+            await _db.Database.ExecuteSqlInterpolatedAsync(
+                $"UPDATE stock_movements SET reverses_movement_id = NULL WHERE product_id = {productId}", ct);
+            await _db.Database.ExecuteSqlInterpolatedAsync(
+                $"DELETE FROM stock_movements WHERE product_id = {productId}", ct);
+
+            // Stock record is removed by the cascade on the product delete.
+            _db.Products.Remove(product);
+            await _db.SaveChangesAsync(ct);
+
+            await tx.CommitAsync(ct);
+            return DeleteProductOutcome.Success;
+        }
+        catch
+        {
+            await tx.RollbackAsync(ct);
+            throw;
+        }
+    }
+
     public async Task<IReadOnlyList<StockMovementRow>> GetMovementsAsync(int? productId, CancellationToken ct = default)
     {
         var query = _db.StockMovements.AsNoTracking();
@@ -156,6 +213,11 @@ public sealed class WarehouseRepository : IWarehouseRepository
             .ToListAsync(ct);
         var revertedSet = reverted.ToHashSet();
 
+        // Current free (unreserved) stock per product — undoing a receipt removes units, so it's only
+        // offered when there's enough left to remove without going below what's reserved for orders.
+        var availableByProduct = await _db.StockItems.AsNoTracking()
+            .ToDictionaryAsync(s => s.ProductId, s => s.Quantity - s.Reserved, ct);
+
         return movements
             .Select(m =>
             {
@@ -164,12 +226,16 @@ public sealed class WarehouseRepository : IWarehouseRepository
                 // Only manual receipts and write-offs may be rolled back; sales belong to orders and
                 // reversals undo themselves.
                 var revertableType = m.Type is StockMovementType.Receipt or StockMovementType.WriteOff;
+                // A receipt (positive quantity) is revertable only if its units are still on hand and
+                // unreserved; a write-off (negative quantity) always can be (the reversal adds stock).
+                availableByProduct.TryGetValue(m.ProductId, out var available);
+                var feasible = m.Quantity <= 0 || available >= m.Quantity;
                 return new StockMovementRow(
                     m.Id, m.ProductId, m.ProductName, TypeLabel(m.Type), m.Quantity,
                     ReasonLabel(m.Reason), m.Comment, m.PerformedBy, m.CreatedAt,
                     m.ReversesMovementId, isReversal, isReversed,
                     // Role is applied in the service; here only the data-level eligibility.
-                    CanRevert: revertableType && !isReversed);
+                    CanRevert: revertableType && !isReversed && feasible);
             })
             .ToList();
     }

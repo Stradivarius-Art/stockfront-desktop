@@ -19,4 +19,6 @@ public sealed record ProductStockRecord(
     int SafetyBufferDays,
     bool IsSeasonal,
     double AvgDailySales,
-    DateTime? LastSale);
+    DateTime? LastSale,
+    string? Description = null,
+    string? ImagePath = null);

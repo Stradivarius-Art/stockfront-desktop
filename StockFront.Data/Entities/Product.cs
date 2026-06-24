@@ -10,6 +10,18 @@ public sealed class Product
 
     public string Name { get; set; } = null!;
 
+    /// <summary>
+    /// Storefront presentation text (long description of the card). Nomenclature, not stock; edited on
+    /// the storefront by an admin. Null when not filled in.
+    /// </summary>
+    public string? Description { get; set; }
+
+    /// <summary>
+    /// Path to the product image, relative to the local image store (see the host's ImageStore). The
+    /// file lives outside the database; only the relative name is persisted. Null when no image.
+    /// </summary>
+    public string? ImagePath { get; set; }
+
     /// <summary>Sale price. Always money (decimal), never floating point.</summary>
     public decimal Price { get; set; }
 
