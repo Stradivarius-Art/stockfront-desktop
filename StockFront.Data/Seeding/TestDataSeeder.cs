@@ -24,19 +24,30 @@ public static class TestDataSeeder
         var seasonal = new Category { Name = "Сезонное" };
 
         // Stock + lead/safety are tuned together with the sales below to land on a specific status.
-        var drill       = Product("DR-104", "Дрель аккумуляторная", 4990m, tools, quantity: 52);   // норма
-        var screwdriver = Product("SC-220", "Шуруповёрт сетевой", 3200m, tools, quantity: 8);       // критично
-        var bitSet      = Product("BT-032", "Набор бит, 32 шт.", 890m, consumables, quantity: 140); // избыток
-        var hammerDrill = Product("PF-880", "Перфоратор SDS-plus", 8750m, tools, quantity: 0);      // нет
-        var laserLevel  = Product("LV-330", "Уровень лазерный", 6400m, measuring, quantity: 24);    // мало
-        var cutDisc     = Product("DC-125", "Диск отрезной, 125 мм", 75m, consumables, quantity: 320); // избыток
-        var screw       = Product("SR-440", "Шуруп 4×40, упаковка", 210m, fasteners, quantity: 36); // норма
-        var square      = Product("SQ-200", "Угольник столярный", 540m, measuring, quantity: 36);   // выше нормы
+        var drill       = Product("DR-104", "Дрель аккумуляторная", 4990m, tools, quantity: 52,   // норма
+            description: "Аккумуляторная дрель-шуруповёрт 18В с двумя скоростями и реверсом. В комплекте два аккумулятора и зарядное устройство.");
+        var screwdriver = Product("SC-220", "Шуруповёрт сетевой", 3200m, tools, quantity: 8,       // критично
+            description: "Сетевой шуруповёрт мощностью 600 Вт с регулировкой крутящего момента. Подходит для длительной работы без подзарядки.");
+        var bitSet      = Product("BT-032", "Набор бит, 32 шт.", 890m, consumables, quantity: 140, // избыток
+            description: "Набор из 32 бит из хром-ванадиевой стали: шлицевые, крестовые, шестигранные и Torx. Удобный пластиковый кейс.");
+        var hammerDrill = Product("PF-880", "Перфоратор SDS-plus", 8750m, tools, quantity: 0,      // нет
+            description: "Перфоратор SDS-plus 900 Вт с тремя режимами работы: сверление, сверление с ударом и долбление.");
+        var laserLevel  = Product("LV-330", "Уровень лазерный", 6400m, measuring, quantity: 24,    // мало
+            description: "Самовыравнивающийся лазерный уровень с проекцией горизонтальной и вертикальной линий. Дальность до 20 м.");
+        var cutDisc     = Product("DC-125", "Диск отрезной, 125 мм", 75m, consumables, quantity: 320, // избыток
+            description: "Отрезной диск по металлу 125×1,2 мм для углошлифовальных машин. Толщина обеспечивает чистый и быстрый рез.");
+        var screw       = Product("SR-440", "Шуруп 4×40, упаковка", 210m, fasteners, quantity: 36, // норма
+            description: "Универсальные саморезы 4×40 мм с потайной головкой, оцинкованные. Упаковка 200 шт.");
+        var square      = Product("SQ-200", "Угольник столярный", 540m, measuring, quantity: 36,   // выше нормы
+            description: "Столярный угольник 200 мм из нержавеющей стали с алюминиевым основанием. Точная разметка под 90° и 45°.");
 
         // Edge cases: a brand-new item (no sales yet), dead stock (old, never sold), seasonal off-season.
-        var newDriver   = Product("NW-500", "Гайковёрт ударный (новинка)", 7200m, tools, quantity: 6);     // новинка
-        var deadStock   = Product("OLD-900", "Тиски слесарные", 2300m, tools, quantity: 15);              // неликвид
-        var heater      = Product("SE-700", "Тепловентилятор", 3100m, seasonal, quantity: 40, isSeasonal: true); // сезон
+        var newDriver   = Product("NW-500", "Гайковёрт ударный (новинка)", 7200m, tools, quantity: 6,     // новинка
+            description: "Аккумуляторный ударный гайковёрт с моментом затяжки до 400 Нм. Бесщёточный двигатель для повышенного ресурса.");
+        var deadStock   = Product("OLD-900", "Тиски слесарные", 2300m, tools, quantity: 15,              // неликвид
+            description: "Слесарные тиски с шириной губок 100 мм и поворотным основанием. Чугунный корпус для надёжной фиксации заготовок.");
+        var heater      = Product("SE-700", "Тепловентилятор", 3100m, seasonal, quantity: 40, isSeasonal: true, // сезон
+            description: "Тепловентилятор 2000 Вт с регулировкой мощности и режимом вентиляции. Защита от перегрева.");
 
         db.Categories.AddRange(tools, consumables, measuring, fasteners, seasonal);
         db.Products.AddRange(
@@ -71,13 +82,15 @@ public static class TestDataSeeder
 
     private static Product Product(
         string sku, string name, decimal price, Category category, int quantity,
-        int leadTimeDays = 7, int safetyBufferDays = 3, bool isSeasonal = false) =>
+        int leadTimeDays = 7, int safetyBufferDays = 3, bool isSeasonal = false,
+        string? description = null) =>
         new()
         {
             Sku = sku,
             Name = name,
             Price = price,
             Category = category,
+            Description = description,
             LeadTimeDays = leadTimeDays,
             SafetyBufferDays = safetyBufferDays,
             IsSeasonal = isSeasonal,
