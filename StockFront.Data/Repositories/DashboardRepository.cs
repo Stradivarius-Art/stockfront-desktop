@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using StockFront.Contracts.Dashboard;
+using StockFront.Contracts.Orders;
 using StockFront.Contracts.Warehouse;
 using StockFront.Data.Entities;
 

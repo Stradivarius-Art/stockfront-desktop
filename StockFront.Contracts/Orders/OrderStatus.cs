@@ -1,9 +1,9 @@
-namespace StockFront.Data.Entities;
+namespace StockFront.Contracts.Orders;
 
 /// <summary>
 /// Order lifecycle states (see diagrams/diagram_state.png):
 /// New → Reserved → Paid → Shipped → Completed, with Cancelled as a terminal branch.
-/// Stored in the database as a string for readability.
+/// Owned by the Orders contract; stored in the database as a string for readability.
 /// </summary>
 public enum OrderStatus
 {

@@ -15,4 +15,18 @@ public interface IOrderRepository
     /// </summary>
     Task<OrderResult> PlaceOrderAsync(
         string customerName, IReadOnlyList<CartItem> items, string? performedBy, CancellationToken ct = default);
+
+    /// <summary>
+    /// All orders as read rows (newest first), each with its line count and total. When
+    /// <paramref name="customerName"/> is given, only that customer's orders are returned (a customer
+    /// sees only their own — see the role matrix in CLAUDE.md).
+    /// </summary>
+    Task<IReadOnlyList<OrderRow>> GetOrdersAsync(string? customerName, CancellationToken ct = default);
+
+    /// <summary>
+    /// Set the order's status. Returns <c>false</c> without changing anything if the order does not
+    /// exist. The lifecycle rules (which transitions are legal, who may make them) are enforced by the
+    /// service above; this only persists the new state.
+    /// </summary>
+    Task<bool> UpdateStatusAsync(int orderId, OrderStatus status, CancellationToken ct = default);
 }

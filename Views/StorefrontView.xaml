@@ -4,6 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:stockfront.ViewModels"
+             xmlns:behaviors="clr-namespace:stockfront.Behaviors"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance Type=vm:StorefrontViewModel}"
@@ -162,9 +163,11 @@
         </DataTemplate>
 
         <!-- ── Catalog card (grid view) ──────────────────────────────────── -->
+        <!-- No fixed Width: the card stretches to fill its (equal-width) UniformGrid cell, so a row of
+             cards spans the full width instead of leaving a gap on the right. -->
         <DataTemplate x:Key="CatalogCardTemplate">
             <Border Background="{StaticResource CardBrush}" CornerRadius="16"
-                    Width="252" Margin="8,0,8,16" Padding="16">
+                    HorizontalAlignment="Stretch" Margin="8,0,8,16" Padding="16">
                 <StackPanel>
                     <!-- Image (or placeholder) + admin edit -->
                     <Grid Height="120">
@@ -462,12 +465,14 @@
             <!-- Catalog: a grid of cards normally, a list when there are only a few products -->
             <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
                 <Grid>
-                    <ItemsControl ItemsSource="{Binding Products}" HorizontalAlignment="Left"
+                    <ItemsControl ItemsSource="{Binding Products}"
                                   ItemTemplate="{StaticResource CatalogCardTemplate}"
                                   Visibility="{Binding IsGridView, Converter={StaticResource BoolToVisibilityConverter}}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <WrapPanel/>
+                                <!-- Columns reflow to fill the width: as many ~268px cells as fit, cards
+                                     stretch to share the row evenly (see behaviors:ResponsiveColumns). -->
+                                <UniformGrid behaviors:ResponsiveColumns.ItemMinWidth="268"/>
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                     </ItemsControl>

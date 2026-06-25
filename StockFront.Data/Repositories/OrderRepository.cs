@@ -84,4 +84,35 @@ public sealed class OrderRepository : IOrderRepository
             throw;
         }
     }
+
+    public async Task<IReadOnlyList<OrderRow>> GetOrdersAsync(string? customerName, CancellationToken ct = default)
+    {
+        var query = _db.Orders.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(customerName))
+            query = query.Where(o => o.CustomerName == customerName);
+
+        return await query
+            .OrderByDescending(o => o.CreatedAt)
+            .ThenByDescending(o => o.Id)
+            .Select(o => new OrderRow(
+                o.Id,
+                o.CustomerName,
+                o.CreatedAt,
+                o.Lines.Count,
+                o.Lines.Sum(l => l.UnitPrice * l.Quantity),
+                o.Status))
+            .ToListAsync(ct);
+    }
+
+    public async Task<bool> UpdateStatusAsync(int orderId, OrderStatus status, CancellationToken ct = default)
+    {
+        var order = await _db.Orders.FirstOrDefaultAsync(o => o.Id == orderId, ct);
+        if (order is null)
+            return false;
+
+        order.Status = status;
+        await _db.SaveChangesAsync(ct);
+        return true;
+    }
 }

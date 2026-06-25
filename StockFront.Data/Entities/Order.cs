@@ -1,3 +1,5 @@
+using StockFront.Contracts.Orders;
+
 namespace StockFront.Data.Entities;
 
 /// <summary>A customer order placed from the storefront. Has one or more line items.</summary>

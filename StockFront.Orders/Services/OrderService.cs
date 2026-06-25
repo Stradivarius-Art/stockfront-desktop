@@ -30,4 +30,41 @@ public sealed class OrderService : IOrderService
         // The order is stamped with the customer as the journal's performer for its sale movements.
         return _repo.PlaceOrderAsync(customerName, items, customerName, ct);
     }
+
+    public Task<IReadOnlyList<OrderRow>> GetOrdersAsync(
+        string? customerName = null, CancellationToken ct = default) =>
+        _repo.GetOrdersAsync(string.IsNullOrWhiteSpace(customerName) ? null : customerName.Trim(), ct);
+
+    public async Task<OrderResult> ChangeStatusAsync(
+        int orderId, OrderStatus newStatus, CancellationToken ct = default)
+    {
+        var rows = await _repo.GetOrdersAsync(null, ct);
+        var order = rows.FirstOrDefault(o => o.Id == orderId);
+        if (order is null)
+            return OrderResult.Fail("Заказ не найден.");
+
+        if (!IsLegalTransition(order.Status, newStatus))
+            return OrderResult.Fail("Недопустимое изменение статуса заказа.");
+
+        return await _repo.UpdateStatusAsync(orderId, newStatus, ct)
+            ? OrderResult.Ok(orderId)
+            : OrderResult.Fail("Заказ не найден.");
+    }
+
+    /// <summary>
+    /// The order lifecycle (see diagrams/diagram_state.png): forward one step along
+    /// New → Reserved → Paid → Shipped → Completed, or cancel from any non-terminal state.
+    /// </summary>
+    private static bool IsLegalTransition(OrderStatus from, OrderStatus to) => (from, to) switch
+    {
+        (OrderStatus.New, OrderStatus.Reserved) => true,
+        (OrderStatus.Reserved, OrderStatus.Paid) => true,
+        (OrderStatus.Paid, OrderStatus.Shipped) => true,
+        (OrderStatus.Shipped, OrderStatus.Completed) => true,
+
+        // Cancel is allowed before the goods leave the warehouse, never from a terminal state.
+        (OrderStatus.New or OrderStatus.Reserved or OrderStatus.Paid, OrderStatus.Cancelled) => true,
+
+        _ => false
+    };
 }

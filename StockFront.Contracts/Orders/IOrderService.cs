@@ -15,4 +15,17 @@ public interface IOrderService
     /// </summary>
     Task<OrderResult> PlaceOrderAsync(
         string customerName, IReadOnlyList<CartItem> items, CancellationToken ct = default);
+
+    /// <summary>
+    /// List orders (newest first). Pass a customer name to restrict the list to that customer's own
+    /// orders (purchasers only see their own); pass <c>null</c> for the full list (admin / staff).
+    /// </summary>
+    Task<IReadOnlyList<OrderRow>> GetOrdersAsync(string? customerName = null, CancellationToken ct = default);
+
+    /// <summary>
+    /// Advance order <paramref name="orderId"/> to <paramref name="newStatus"/>, validating the
+    /// transition against the lifecycle (New → Reserved → Paid → Shipped → Completed, plus Cancelled
+    /// from any non-terminal state). Fails (changing nothing) on an illegal transition or unknown order.
+    /// </summary>
+    Task<OrderResult> ChangeStatusAsync(int orderId, OrderStatus newStatus, CancellationToken ct = default);
 }

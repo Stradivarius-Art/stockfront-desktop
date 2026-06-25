@@ -177,6 +177,7 @@ public partial class App : Application
         services.AddTransient<DashboardViewModel>();
         services.AddTransient<WarehouseViewModel>();
         services.AddTransient<StorefrontViewModel>();
+        services.AddTransient<OrdersViewModel>();
         services.AddTransient<MainViewModel>();
         services.AddTransient<MainWindow>();
 

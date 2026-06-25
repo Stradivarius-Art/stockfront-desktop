@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using StockFront.Contracts.Orders;
 using StockFront.Data.Entities;
 
 namespace StockFront.Data.Seeding;

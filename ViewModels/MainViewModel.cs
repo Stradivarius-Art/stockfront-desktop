@@ -16,16 +16,18 @@ public sealed partial class MainViewModel : ObservableObject
     private readonly DashboardViewModel _dashboard;
     private readonly WarehouseViewModel _warehouse;
     private readonly StorefrontViewModel _storefront;
+    private readonly OrdersViewModel _orders;
 
     public MainViewModel(
         ICurrentUser currentUser, IAuthService auth, DashboardViewModel dashboard,
-        WarehouseViewModel warehouse, StorefrontViewModel storefront)
+        WarehouseViewModel warehouse, StorefrontViewModel storefront, OrdersViewModel orders)
     {
         _currentUser = currentUser;
         _auth = auth;
         _dashboard = dashboard;
         _warehouse = warehouse;
         _storefront = storefront;
+        _orders = orders;
     }
 
     /// <summary>Raised after the user signs out, so the host can return to the login window.</summary>
@@ -115,6 +117,11 @@ public sealed partial class MainViewModel : ObservableObject
             CurrentPage = _storefront;
             await _storefront.LoadAsync();
         }
+        else if (section == "orders")
+        {
+            CurrentPage = _orders;
+            await _orders.LoadAsync();
+        }
         else
         {
             CurrentPage = BuildPlaceholder(section);
@@ -134,13 +141,6 @@ public sealed partial class MainViewModel : ObservableObject
                 ("Витрина", "Каталог, корзина, оформление и редактирование карточек товаров."),
             ("storefront", _) =>
                 ("Витрина", "Каталог товаров и корзина."),
-
-            ("orders", UserRole.Admin) =>
-                ("Заказы", "Все заказы, любой статус, отгрузка."),
-            ("orders", UserRole.WarehouseKeeper) =>
-                ("Заказы", "Заказы в статусе «Оплачен» — перевод в «Отгружен»."),
-            ("orders", _) =>
-                ("Заказы", "Только свои заказы (просмотр)."),
 
             ("profile", _) =>
                 ("Профиль", "Личные данные и смена пароля."),
