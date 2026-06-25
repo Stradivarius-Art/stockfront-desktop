@@ -56,10 +56,21 @@ public static class TestDataSeeder
             newDriver, deadStock, heater);
 
         // Active orders (drive "Активных заказов" / "Выручка за месяц" on the dashboard).
-        db.Orders.AddRange(
+        var activeOrders = new[]
+        {
             Order("Петров П.", OrderStatus.Paid, Line(laserLevel, 1)),
             Order("ООО «Стройка»", OrderStatus.New, Line(screwdriver, 3), Line(cutDisc, 10)),
-            Order("Сидоров А.", OrderStatus.Reserved, Line(square, 1)));
+            Order("Сидоров А.", OrderStatus.Reserved, Line(square, 1)),
+        };
+        db.Orders.AddRange(activeOrders);
+
+        // A pre-shipment order (Новая/Зарезервирована/Оплачена) holds its goods reserved until shipment,
+        // so the seeded stock must mirror that — otherwise shipping or cancelling a seeded order would
+        // drive Reserved negative. (The Completed order below is already shipped: no reservation, and its
+        // quantities are baked into the on-hand figures above.)
+        foreach (var order in activeOrders)
+            foreach (var line in order.Lines)
+                line.Product.Stock!.Reserved += line.Quantity;
 
         // Sales history (shipped/completed) within the 30-day window — this is the avg_daily_sales the
         // status is derived from. Totals per product are chosen to hit the target Days-of-Supply band.

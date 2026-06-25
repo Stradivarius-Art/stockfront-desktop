@@ -5,9 +5,10 @@ namespace StockFront.Orders.Services;
 
 /// <summary>
 /// Orders business logic. Validates the cart (a customer, at least one line, positive quantities) and
-/// hands the checkout to <see cref="IOrderRepository"/>, which deducts the goods from the warehouse and
-/// saves the order in one transaction. The availability re-check that matters happens there, at commit
-/// time, against live stock — this class never touches the database, so it unit-tests with a mocked repo.
+/// hands the checkout to <see cref="IOrderRepository"/>, which reserves the goods in the warehouse and
+/// saves the order as Новая in one transaction. The availability re-check that matters happens there, at
+/// commit time, against live stock — this class never touches the database, so it unit-tests with a mocked
+/// repo. Status transitions (and their stock effects) go through <see cref="ChangeStatusAsync"/> below.
 /// </summary>
 public sealed class OrderService : IOrderService
 {

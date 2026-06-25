@@ -9,9 +9,10 @@ namespace StockFront.Contracts.Persistence;
 public interface IOrderRepository
 {
     /// <summary>
-    /// In a single transaction: re-check stock for every line, decrement it (journaling a sale
-    /// movement per product), and save the order with its lines. Returns the new order id, or a failure
-    /// result if a line can no longer be satisfied. <paramref name="performedBy"/> stamps the journal.
+    /// In a single transaction: re-check stock for every line, reserve it (Reserved += qty, physical
+    /// Quantity untouched), and save the order with its lines as Новая. Returns the new order id, or a
+    /// failure result if a line can no longer be satisfied. The reservation becomes a real write-off on
+    /// shipment (see <see cref="UpdateStatusAsync"/>). <paramref name="performedBy"/> stamps the journal.
     /// </summary>
     Task<OrderResult> PlaceOrderAsync(
         string customerName, IReadOnlyList<CartItem> items, string? performedBy, CancellationToken ct = default);
@@ -24,9 +25,10 @@ public interface IOrderRepository
     Task<IReadOnlyList<OrderRow>> GetOrdersAsync(string? customerName, CancellationToken ct = default);
 
     /// <summary>
-    /// Set the order's status. Returns <c>false</c> without changing anything if the order does not
-    /// exist. The lifecycle rules (which transitions are legal, who may make them) are enforced by the
-    /// service above; this only persists the new state.
+    /// Set the order's status, applying the stock side effects of the transition in one transaction:
+    /// shipment turns the reservation into a physical write-off (and journals a sale), cancellation
+    /// releases the reservation. Returns <c>false</c> without changing anything if the order does not
+    /// exist. Which transitions are legal and who may make them are enforced by the service above.
     /// </summary>
     Task<bool> UpdateStatusAsync(int orderId, OrderStatus status, CancellationToken ct = default);
 }

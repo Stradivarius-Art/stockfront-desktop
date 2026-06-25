@@ -7,7 +7,7 @@ namespace StockFront.Contracts.Orders;
 /// </summary>
 public enum OrderStatus
 {
-    /// <summary>Новая — created, stock not yet reserved.</summary>
+    /// <summary>Новая — created from the storefront; stock is already reserved (held until shipment).</summary>
     New,
 
     /// <summary>Зарезервирована — stock reserved in the warehouse.</summary>
