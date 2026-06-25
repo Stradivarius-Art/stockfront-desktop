@@ -8,6 +8,7 @@
              xmlns:views="clr-namespace:stockfront.Views">
     <Application.Resources>
         <conv:NullToCollapsedConverter x:Key="NullToCollapsedConverter" />
+        <conv:NullToVisibleConverter x:Key="NullToVisibleConverter" />
         <conv:StringEqualsConverter x:Key="StringEqualsConverter" />
         <conv:MoneyToRubleConverter x:Key="MoneyToRubleConverter" />
         <conv:InverseBooleanConverter x:Key="InverseBooleanConverter" />

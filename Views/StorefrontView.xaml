@@ -174,10 +174,12 @@
                         <Border CornerRadius="12" Background="{StaticResource WorkAreaBrush}"/>
                         <iconPacks:PackIconMaterial Kind="ImageArea" Width="34" Height="34"
                                                     Foreground="{StaticResource AccentBrush}"
-                                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                    Visibility="{Binding ImagePath, Converter={StaticResource NullToVisibleConverter}}"/>
+                        <!-- Uniform: scale the whole photo to fit inside the box, never cropped or overflowing -->
                         <Border CornerRadius="12">
                             <Border.Background>
-                                <ImageBrush Stretch="UniformToFill"
+                                <ImageBrush Stretch="Uniform"
                                             ImageSource="{Binding ImagePath, Converter={StaticResource ImageSourceConverter}}"/>
                             </Border.Background>
                         </Border>
@@ -275,10 +277,11 @@
                         <Border CornerRadius="10" Background="{StaticResource WorkAreaBrush}"/>
                         <iconPacks:PackIconMaterial Kind="ImageArea" Width="22" Height="22"
                                                     Foreground="{StaticResource AccentBrush}"
-                                                    HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                    Visibility="{Binding ImagePath, Converter={StaticResource NullToVisibleConverter}}"/>
                         <Border CornerRadius="10">
                             <Border.Background>
-                                <ImageBrush Stretch="UniformToFill"
+                                <ImageBrush Stretch="Uniform"
                                             ImageSource="{Binding ImagePath, Converter={StaticResource ImageSourceConverter}}"/>
                             </Border.Background>
                         </Border>
@@ -642,10 +645,11 @@
                             <Border CornerRadius="12" Background="{StaticResource WorkAreaBrush}"/>
                             <iconPacks:PackIconMaterial Kind="ImageArea" Width="26" Height="26"
                                                         Foreground="{StaticResource AccentBrush}"
-                                                        HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                        Visibility="{Binding EditImagePath, Converter={StaticResource NullToVisibleConverter}}"/>
                             <Border CornerRadius="12">
                                 <Border.Background>
-                                    <ImageBrush Stretch="UniformToFill"
+                                    <ImageBrush Stretch="Uniform"
                                                 ImageSource="{Binding EditImagePath, Converter={StaticResource ImageSourceConverter}}"/>
                                 </Border.Background>
                             </Border>

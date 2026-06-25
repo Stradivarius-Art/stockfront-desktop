@@ -101,6 +101,12 @@
             </Setter>
         </Style>
 
+        <!-- Item template: also used for the closed selection box, so the label renders instead of the
+             record's ToString() under the custom ComboBox template. -->
+        <DataTemplate x:Key="ComboItemLabel">
+            <TextBlock Text="{Binding Label}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+        </DataTemplate>
+
         <!-- Rounded dropdown item — matches the rest of the rounded UI -->
         <Style x:Key="RoundedComboItem" TargetType="ComboBoxItem">
             <Setter Property="Padding" Value="12,8"/>
@@ -225,7 +231,7 @@
             <TextBlock Text="Статус" VerticalAlignment="Center" Margin="0,0,10,0"
                        FontSize="13" Foreground="{StaticResource SecondaryTextBrush}"/>
             <ComboBox Style="{StaticResource FilterCombo}" Width="220"
-                      ItemsSource="{Binding Filters}" DisplayMemberPath="Label"
+                      ItemsSource="{Binding Filters}" ItemTemplate="{StaticResource ComboItemLabel}"
                       SelectedItem="{Binding SelectedFilter, Mode=TwoWay}"/>
         </StackPanel>
 
@@ -257,7 +263,14 @@
                     <TextBlock Grid.Column="5" Text="Статус" Style="{StaticResource ColHeader}"/>
                 </Grid>
 
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <!-- Empty state: shown instead of the table when nothing matches the current filter -->
+                <TextBlock Grid.Row="1" Text="{Binding EmptyText}"
+                           FontSize="14" Foreground="{StaticResource SecondaryTextBrush}"
+                           HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,40"
+                           Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                              Visibility="{Binding IsEmpty, Converter={StaticResource InverseBoolToVisibilityConverter}}">
                     <ItemsControl ItemsSource="{Binding Orders}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>

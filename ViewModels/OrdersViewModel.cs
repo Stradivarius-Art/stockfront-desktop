@@ -57,6 +57,12 @@ public sealed partial class OrdersViewModel : ObservableObject
     [ObservableProperty] private bool _isLoading;
     [ObservableProperty] private string? _error;
 
+    /// <summary>True when the table has no rows to show — drives the empty-state message.</summary>
+    [ObservableProperty] private bool _isEmpty;
+
+    /// <summary>The empty-state caption: distinguishes "no orders at all" from "none match the filter".</summary>
+    [ObservableProperty] private string _emptyText = "Заказов пока нет";
+
     [ObservableProperty] private StatusFilterOption? _selectedFilter;
     partial void OnSelectedFilterChanged(StatusFilterOption? value) => ApplyFilter();
 
@@ -97,6 +103,12 @@ public sealed partial class OrdersViewModel : ObservableObject
         Orders.Clear();
         foreach (var row in rows)
             Orders.Add(row);
+
+        IsEmpty = Orders.Count == 0;
+        // "Nothing at all" vs "nothing for this filter" — so the message matches what the user did.
+        EmptyText = _all.Count == 0
+            ? "Заказов пока нет"
+            : "Нет заказов с таким статусом";
     }
 
     // ── Lifecycle actions (advance / cancel) ────────────────────────────────────────
@@ -146,7 +158,8 @@ public sealed partial class OrdersViewModel : ObservableObject
         {
             Title = "Экспорт заказов",
             Filter = "CSV (разделитель — точка с запятой)|*.csv",
-            FileName = $"orders_{DateTime.Now:yyyy-MM-dd}.csv"
+            // Include the time down to the second so repeated exports get unique, easy-to-save names.
+            FileName = $"orders_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.csv"
         };
         if (dialog.ShowDialog() != true)
             return;
